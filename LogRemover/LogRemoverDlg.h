@@ -63,4 +63,5 @@ public:
 	afx_msg void OnMenuStop();
 	afx_msg void OnMenuPopup();
 	afx_msg void OnMenuExit();
+	afx_msg void OnClose();
 };

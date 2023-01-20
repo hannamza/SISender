@@ -67,4 +67,5 @@ public:
 
 	BOOL ReadIniFile();
 	int GetKeepAlivePeriod();
+	afx_msg void OnClose();
 };

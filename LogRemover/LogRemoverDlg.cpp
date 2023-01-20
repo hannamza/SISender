@@ -76,6 +76,7 @@ BEGIN_MESSAGE_MAP(CLogRemoverDlg, CDialogEx)
 	ON_COMMAND(32774, &CLogRemoverDlg::OnMenuStop)
 	ON_COMMAND(32776, &CLogRemoverDlg::OnMenuPopup)
 	ON_COMMAND(32778, &CLogRemoverDlg::OnMenuExit)
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 bool g_bThread = false;
@@ -311,6 +312,8 @@ void CLogRemoverDlg::OnBnClickedButtonStart()
 	g_bThread = true;
 	m_Thread = new thread(&func_thread, this, m_sPath, nTerm);
 
+	m_bStarted = true;
+
 	GetDlgItem(IDC_BUTTON_START)->EnableWindow(FALSE);
 	GetDlgItem(IDC_BUTTON_STOP)->EnableWindow(TRUE);
 
@@ -329,6 +332,8 @@ void CLogRemoverDlg::OnBnClickedButtonStop()
 	m_Thread->join();
 
 	SAFE_DELETE(m_Thread);
+
+	m_bStarted = false;
 
 	GetDlgItem(IDC_BUTTON_START)->EnableWindow(TRUE);
 	GetDlgItem(IDC_BUTTON_STOP)->EnableWindow(FALSE);
@@ -657,4 +662,13 @@ void CLogRemoverDlg::RegistryTrayIcon()
 
 	BOOL bRet = ::Shell_NotifyIcon(NIM_ADD, &nid); //트레이 아이콘 등록
 	ShowWindow(SW_HIDE); //윈도우 감추기
+}
+
+void CLogRemoverDlg::OnClose()
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	RegistryTrayIcon();
+	return;
+
+	CDialogEx::OnClose();
 }
