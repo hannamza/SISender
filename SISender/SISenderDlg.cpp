@@ -16,18 +16,18 @@ UINT ThreadSMCheck(LPVOID pParam)
 {
 	CSISenderDlg* pDlg = (CSISenderDlg*)pParam;
 
-	time_t compTime = CSM::ReadEventTimeFromSharedMemory();
+	SYSTEMTIME st = CSM::ReadEventTimeFromSharedMemory();
 
 	while (pDlg->m_bSMCheck)
 	{
-		if (compTime != CSM::ReadEventTimeFromSharedMemory())
+		if (pDlg->CheckSMTimeChanged(st, CSM::ReadEventTimeFromSharedMemory()))
 		{
 			BYTE buf[SI_EVENT_BUF_SIZE];
 			CSM::ReadEventBufFromSharedMemory(buf, sizeof(buf));
 			CEventSend::Instance()->SendEvent(buf);
-			compTime = CSM::shm->es.time;
+			st = CSM::ReadEventTimeFromSharedMemory();
 
-			Log::Trace("이벤트 처리함!");
+			//Log::Trace("이벤트 처리함!");
 		}
 	}
 
@@ -905,4 +905,30 @@ void CSISenderDlg::OnClose()
 	return;
 
 	CDialogEx::OnClose();
+}
+
+BOOL CSISenderDlg::CheckSMTimeChanged(SYSTEMTIME preTime, SYSTEMTIME curTime)
+{
+	if (preTime.wMilliseconds != curTime.wMilliseconds)
+		return TRUE;
+
+	if (preTime.wSecond != curTime.wSecond)
+		return TRUE;
+
+	if (preTime.wMinute != curTime.wMinute)
+		return TRUE;
+
+	if (preTime.wHour != curTime.wHour)
+		return TRUE;
+
+	if (preTime.wDay != curTime.wDay)
+		return TRUE;
+
+	if (preTime.wMonth != curTime.wMonth)
+		return TRUE;
+
+	if (preTime.wYear != curTime.wYear)
+		return TRUE;
+
+	return FALSE;
 }

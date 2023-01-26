@@ -56,7 +56,9 @@ void CSM::CloseSharedMemory()
 void CSM::WriteEventToSharedMemory(BYTE* pData)
 {
 	time_t t = time(NULL);
-	CSM::shm->es.time = t;
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+	CSM::shm->es.time = st;
 	memcpy(CSM::shm->es.event, pData, 15);
 }
 
@@ -86,7 +88,7 @@ void CSM::ReadEventBufFromSharedMemory(BYTE* pBuf, int nBufSize)
 	memcpy(pBuf, CSM::shm->es.event, nBufSize);
 }
 
-time_t CSM::ReadEventTimeFromSharedMemory()
+SYSTEMTIME CSM::ReadEventTimeFromSharedMemory()
 {
 	return CSM::shm->es.time;
 }

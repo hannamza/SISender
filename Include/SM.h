@@ -6,7 +6,7 @@
 
 typedef struct 
 {
-	time_t time;
+	SYSTEMTIME time;
 	BYTE event[SI_EVENT_BUF_SIZE];
 }EVENT_STRUCT;
 
@@ -29,7 +29,7 @@ public:
 	static void WriteAliveCountToSharedMemory(int nProcessIndex, ULONGLONG nCount);
 	static void WriteProcessRunToSharedMemory(int nProcessIndex, bool bRun);
 	static void ReadEventBufFromSharedMemory(BYTE* pBuf, int nBufSize);
-	static time_t ReadEventTimeFromSharedMemory();
+	static SYSTEMTIME ReadEventTimeFromSharedMemory();
 	static ULONGLONG ReadAliveCountFromSharedMemory(int nProcessIndex);
 	static bool ReadProcessRunFromSharedMemory(int nProcessIndex);
 };

@@ -51,6 +51,12 @@ public:
 	
 	CRichEditCtrl m_richLog;
 	CButton m_checkScroll;
+	CButton m_btnTest;
+
+	BOOL ReadIniFile();
+	int GetKeepAlivePeriod();
+	BOOL CheckSMTimeChanged(SYSTEMTIME preTime, SYSTEMTIME curTime);	// 실제 시간으로 변환해서 같은지 확인하는 것보다 빠를 것으로 판단해서 이 매서드를 쓰기로 함
+
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonStart();
 	afx_msg void OnBnClickedButtonStop();
@@ -59,13 +65,9 @@ public:
 	afx_msg void OnMenuStop();
 	afx_msg void OnMenuPopup();
 	afx_msg void OnMenuExit();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	CButton m_btnTest;
+	virtual BOOL PreTranslateMessage(MSG* pMsg);	
 	afx_msg void OnBnClickedButtonTest();
 	afx_msg void OnDestroy();
-	afx_msg LRESULT OnLogMessage(WPARAM wParam, LPARAM lParam);
-
-	BOOL ReadIniFile();
-	int GetKeepAlivePeriod();
+	afx_msg LRESULT OnLogMessage(WPARAM wParam, LPARAM lParam);	
 	afx_msg void OnClose();
 };
