@@ -553,20 +553,37 @@ void CBrokerDlg::OnBnClickedButtonTest()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
-	BYTE pData[15];
-	memset(pData, NULL, 15);
-	pData[0] = 'G';
-	pData[1] = 'X';
-	pData[2] = 'R';
-	memcpy(&pData[3], "00", 2);
-	memcpy(&pData[5], "00", 2);
-	pData[7] = '-';
-	pData[8] = '0';
-	memcpy(&pData[9], "000", 3);
-	memcpy(&pData[12], "\r\n", 2);
+// 	BYTE pData[15];
+// 	memset(pData, NULL, 15);
+// 	pData[0] = 'G';
+// 	pData[1] = 'X';
+// 	pData[2] = 'R';
+// 	memcpy(&pData[3], "00", 2);
+// 	memcpy(&pData[5], "00", 2);
+// 	pData[7] = '-';
+// 	pData[8] = '0';
+// 	memcpy(&pData[9], "000", 3);
+// 	memcpy(&pData[12], "\r\n", 2);
+// 
+// 	CSM::WriteEventToSharedMemory(pData);
+// 	Log::Trace("Event Test - Shared Memory Wrote!");
 
-	CSM::WriteEventToSharedMemory(pData);
-	Log::Trace("Event Test - Shared Memory Wrote!");
+	CDlgEventTest dlg;
+	if (dlg.DoModal() == IDOK)
+	{
+		BYTE pData[SI_EVENT_BUF_SIZE];
+		memset(pData, NULL, SI_EVENT_BUF_SIZE);
+		memcpy(pData, dlg.m_eventBuf, SI_EVENT_BUF_SIZE);
+
+		CSM::WriteEventToSharedMemory(pData);
+
+		CString strBuf = _T("");
+		for (int i = 0; i < SI_EVENT_BUF_SIZE; i++)
+		{
+			strBuf += pData[i];
+		}
+		Log::Trace("Event Test - [%s] Shared Memory is Written!", CCommonFunc::WCharToChar(strBuf.GetBuffer(0)));
+	}
 }
 
 

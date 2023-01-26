@@ -6,6 +6,7 @@
 #include "EventSend.h"
 #include "afxwin.h"
 #include "afxcmn.h"
+#include "DlgEventTest.h"
 
 // CBrokerDlg 대화 상자
 class CBrokerDlg : public CDialogEx

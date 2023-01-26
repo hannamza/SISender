@@ -36,6 +36,70 @@ enum {
 	SI_EVENT_BUF_SIZE
 };
 
+//수신기 event 명령 코드 enum
+enum {
+	COMMAND_FIRE,
+	COMMAND_GAS,
+	COMMAND_SURVEIL,
+	COMMAND_CUT,
+	COMMAND_RECOVER,
+	COMMAND_TOTAL_COUNT
+};
+
+// 발생 정보 enum
+enum {
+	OCCUR_INFO_OCCUR,
+	OCCUR_INFO_RECOVER,
+	OCCUR_INFO_TOTAL_COUNT
+};
+
+//수신기 event 명령 코드 문자열
+static const TCHAR* g_lpszCommandString[] = {
+	_T("화재"),	//F
+	_T("가스"),	//G
+	_T("감시"),	//S
+	_T("단선"),	//T
+	_T("복구"),	//R
+	NULL
+};
+
+//수신기 event 명령 코드
+static const TCHAR g_lpszCommand[] = {
+	_T('F'),	//화재
+	_T('G'),	//가스
+	_T('S'),	//감시
+	_T('T'),	//단선
+	_T('R'),	//복구
+	NULL
+};
+
+//수신기 event 발생 문자열
+static const TCHAR* g_lpszOccurInfoString[] = {
+	_T("발생"),
+	_T("복구"),
+	NULL
+};
+
+//수신기 event 발생 코드
+static const TCHAR g_lpszOccurInfo[] = {
+	_T('N'),
+	_T('F'),
+	NULL
+};
+
+//수신기 최대 개수
+#define RECEIVER_MAX_COUNT	32
+
+//유닛 최대 개수
+#define UNIT_MAX_COUNT	64
+
+//계통 최대 개수
+#define SYSTEM_MAX_COUNT	4
+
+//회로 최대 개수
+#define CIRCUIT_MAX_COUNT	253
+
+
 //프로세스 명
 static const TCHAR* g_lpszProcessName[] = {
 	_T("Broker.exe"),
