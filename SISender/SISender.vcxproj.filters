@@ -54,9 +54,6 @@
     <ClInclude Include="Network.h">
       <Filter>소스 파일\Socket</Filter>
     </ClInclude>
-    <ClInclude Include="CommonFunc.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CommonState.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -105,6 +102,9 @@
     <ClInclude Include="..\Include\CommonDefines.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\CommonFunc.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SISender.cpp">
@@ -130,9 +130,6 @@
     </ClCompile>
     <ClCompile Include="Network.cpp">
       <Filter>소스 파일\Socket</Filter>
-    </ClCompile>
-    <ClCompile Include="CommonFunc.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CommonState.cpp">
       <Filter>소스 파일\Socket</Filter>
@@ -163,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="Log.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\CommonFunc.cpp">
+      <Filter>Include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

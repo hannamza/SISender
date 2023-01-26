@@ -3,11 +3,6 @@
 #include "Wininet.h"
 #include <Tlhelp32.h>
 
-//20230112 GBM start - ClientInterface 클래스 없이 동작하려면 이부분을 적용해야 wstring 미정의 오류를 막을 수 있음
-#include <thread>
-using namespace std;
-//20230112 GBM end
-
 #pragma comment(lib, "Wininet.lib")
 
 
@@ -1571,10 +1566,15 @@ BOOL CCommonFunc::RegistryDisableHighDpiAware(WCHAR* pPath/*=NULL*/)
 	else wcscpy_s(szPath, pPath);
 
 	HKEY key;
-	wstring featuresPath(L"Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers\\");
-	wstring path(featuresPath);
+// 	wstring featuresPath(L"Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers\\");
+// 	wstring path(featuresPath);
+// 
+// 	LONG nError = RegCreateKeyEx(HKEY_CURRENT_USER, path.c_str(), 0, NULL, REG_OPTION_VOLATILE, KEY_WRITE, NULL, &key, NULL);
 
-	LONG nError = RegCreateKeyEx(HKEY_CURRENT_USER, path.c_str(), 0, NULL, REG_OPTION_VOLATILE, KEY_WRITE, NULL, &key, NULL);
+	CString featuresPath(L"Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers\\");
+	CString path(featuresPath);
+
+	LONG nError = RegCreateKeyEx(HKEY_CURRENT_USER, path, 0, NULL, REG_OPTION_VOLATILE, KEY_WRITE, NULL, &key, NULL);
 	if (nError != ERROR_SUCCESS) {
 		return FALSE;
 	} else {
@@ -1591,4 +1591,30 @@ BOOL CCommonFunc::RegistryDisableHighDpiAware(WCHAR* pPath/*=NULL*/)
 		}
 	}
 	return TRUE;
+}
+
+CString CCommonFunc::GetProgramPath()
+{
+	CString strPath;
+	TCHAR szPath[1024];
+	GetModuleFileName(NULL, szPath, 1024);
+	strPath.Format(_T("%s"), szPath);
+	return strPath;
+}
+
+CString CCommonFunc::GetProgramDir()
+{
+	CString strPath;
+	TCHAR szPath[1024];
+	GetModuleFileName(NULL, szPath, 1024);
+	strPath.Format(_T("%s"), szPath);
+	strPath = strPath.Left(strPath.ReverseFind('\\') + 1);
+	return strPath;
+}
+
+CString CCommonFunc::GetFileNameOnly(CString strPath)
+{
+	CString strFileName;
+	strFileName = strPath.Right(strPath.GetLength() - strPath.ReverseFind('\\') - 1);
+	return strFileName;
 }

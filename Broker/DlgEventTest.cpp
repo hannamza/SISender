@@ -120,7 +120,7 @@ void CDlgEventTest::InitControl()
 
 	m_ctrlComboSystemNo.SetCurSel(0);
 
-	for (int nCircuitNo = 0; nCircuitNo < CIRCUIT_MAX_COUNT; nCircuitNo++)
+	for (int nCircuitNo = 1; nCircuitNo < CIRCUIT_MAX_COUNT; nCircuitNo++)
 	{
 		strItem.Format(_T("%d"), nCircuitNo);
 		m_ctrlComboCircuitNo.InsertString(m_ctrlComboCircuitNo.GetCount(), strItem);

@@ -38,6 +38,7 @@
 #include "Network.h"
 #include "ClientInterface.h"
 #include "CommonProtocol.h"
+#include "KocomProtocol.h"
 #include "CommonState.h"
 #include "ReadWriteState.h"
 #include "SM.h"

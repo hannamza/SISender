@@ -2,7 +2,7 @@
 
 #include "EncDec.h"
 
-#include "KocomProtocol.h"
+//#include "KocomProtocol.h"
 
 #pragma pack(push, 1)
 

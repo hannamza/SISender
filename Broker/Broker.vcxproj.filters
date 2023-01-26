@@ -39,9 +39,6 @@
     <ClInclude Include="Resource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CommonFunc.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="DeviceInfo.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -84,6 +81,9 @@
     <ClInclude Include="DlgEventTest.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\CommonFunc.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Broker.cpp">
@@ -93,9 +93,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CommonFunc.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SerialComm.cpp">
@@ -124,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="DlgEventTest.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\CommonFunc.cpp">
+      <Filter>Include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

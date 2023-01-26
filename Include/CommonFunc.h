@@ -152,7 +152,6 @@ public:
 	static BOOL		GetFileVersion(CString sFilePath, CString & sVersion);
 	static BOOL		RegistryDisableHighDpiAware(WCHAR* szPath=NULL);
 
-	//
 	static CString GetProgramPath();
 	static CString GetProgramDir();
 	static CString GetFileNameOnly(CString strPath);

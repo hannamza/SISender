@@ -188,6 +188,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\CommonDefines.h" />
+    <ClInclude Include="..\Include\CommonFunc.h" />
     <ClInclude Include="..\Include\CriticalSectionEx.h" />
     <ClInclude Include="..\Include\EncDec.h" />
     <ClInclude Include="..\Include\MiniDump.h" />
@@ -199,7 +200,6 @@
     <ClInclude Include="..\Protocol\CommonProtocol.h" />
     <ClInclude Include="Broker.h" />
     <ClInclude Include="BrokerDlg.h" />
-    <ClInclude Include="CommonFunc.h" />
     <ClInclude Include="DeviceInfo.h" />
     <ClInclude Include="DlgEventTest.h" />
     <ClInclude Include="Log.h" />
@@ -209,6 +209,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Include\CommonFunc.cpp" />
     <ClCompile Include="..\Include\EncDec.cpp" />
     <ClCompile Include="..\Include\MiniDump.cpp" />
     <ClCompile Include="..\Include\MinidumpHelp.cpp" />
@@ -216,7 +217,6 @@
     <ClCompile Include="..\Include\SM.cpp" />
     <ClCompile Include="Broker.cpp" />
     <ClCompile Include="BrokerDlg.cpp" />
-    <ClCompile Include="CommonFunc.cpp" />
     <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="DlgEventTest.cpp" />
     <ClCompile Include="Log.cpp" />
