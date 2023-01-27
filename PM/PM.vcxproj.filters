@@ -75,9 +75,6 @@
     <ClInclude Include="..\Protocol\CommonProtocol.h">
       <Filter>Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="DeviceInfo.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="ProcWrapper.h">
       <Filter>PMLib</Filter>
     </ClInclude>
@@ -111,9 +108,6 @@
       <Filter>Include</Filter>
     </ClCompile>
     <ClCompile Include="Log.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DeviceInfo.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ProcWrapper.cpp">

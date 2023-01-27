@@ -71,7 +71,10 @@ BOOL CDlgEventTest::PreTranslateMessage(MSG* pMsg)
 void CDlgEventTest::OnBnClickedButtonConfirm()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	MakeEventBuf();
+	if (!MakeEventBuf())
+	{
+		return;
+	}
 	
 	OnOK();
 }
@@ -120,7 +123,7 @@ void CDlgEventTest::InitControl()
 
 	m_ctrlComboSystemNo.SetCurSel(0);
 
-	for (int nCircuitNo = 1; nCircuitNo < CIRCUIT_MAX_COUNT; nCircuitNo++)
+	for (int nCircuitNo = 0; nCircuitNo < CIRCUIT_MAX_COUNT; nCircuitNo++)
 	{
 		strItem.Format(_T("%d"), nCircuitNo);
 		m_ctrlComboCircuitNo.InsertString(m_ctrlComboCircuitNo.GetCount(), strItem);
@@ -137,9 +140,10 @@ void CDlgEventTest::InitControl()
 	m_ctrlComboOccerInfo.SetCurSel(0);
 }
 
-void CDlgEventTest::MakeEventBuf()
+BOOL CDlgEventTest::MakeEventBuf()
 {
 	int nIndex = 0;
+	int nCommandIndex = 0;
 	CString strTemp = _T("");
 
 	memset(m_eventBuf, NULL, SI_EVENT_BUF_SIZE);
@@ -147,7 +151,7 @@ void CDlgEventTest::MakeEventBuf()
 	m_eventBuf[SI_EVENT_BUF_COMPANY_1] = 'G';
 	m_eventBuf[SI_EVENT_BUF_COMPANY_2] = 'X';
 
-	nIndex = m_ctrlComboCommand.GetCurSel();
+	nCommandIndex = nIndex = m_ctrlComboCommand.GetCurSel();
 	m_eventBuf[SI_EVENT_BUF_COMMAND] = g_lpszCommand[nIndex];
 	
 	nIndex = m_ctrlComboReceiverNo.GetCurSel();
@@ -167,6 +171,15 @@ void CDlgEventTest::MakeEventBuf()
 	m_eventBuf[SI_EVENT_BUF_SYSTEM] = strTemp.GetAt(0);
 
 	nIndex = m_ctrlComboCircuitNo.GetCurSel();
+	if (nIndex == 0)
+	{
+		if (nCommandIndex != COMMAND_RECOVER)
+		{
+			AfxMessageBox(_T("수신기 복구 외에 회로번호는 0일 수 없습니다."));
+			return FALSE;
+		}
+	}
+
 	strTemp.Format(_T("%03d"), nIndex);
 	m_eventBuf[SI_EVENT_BUF_CIRCUIT_1] = strTemp.GetAt(0);
 	m_eventBuf[SI_EVENT_BUF_CIRCUIT_2] = strTemp.GetAt(1);
@@ -174,6 +187,8 @@ void CDlgEventTest::MakeEventBuf()
 
 	nIndex = m_ctrlComboOccerInfo.GetCurSel();
 	m_eventBuf[SI_EVENT_BUF_OCCUR_INFO] = g_lpszOccurInfo[nIndex];
+
+	return TRUE;
 }
 
 void CDlgEventTest::OnSelchangeComboCommand()

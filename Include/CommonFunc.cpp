@@ -1608,7 +1608,7 @@ CString CCommonFunc::GetProgramDir()
 	TCHAR szPath[1024];
 	GetModuleFileName(NULL, szPath, 1024);
 	strPath.Format(_T("%s"), szPath);
-	strPath = strPath.Left(strPath.ReverseFind('\\') + 1);
+	strPath = strPath.Left(strPath.ReverseFind('\\'));
 	return strPath;
 }
 

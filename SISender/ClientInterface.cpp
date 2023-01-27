@@ -220,25 +220,29 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 	alarm.header.headerKey = KOCOM_HEADER_KEY_VALUE;
 	alarm.header.msgType = KOCOM_FIRE_TYPE | KOCOM_MSG_FIRE_ALARM;
 	alarm.header.msgLength = sizeof(KOCOMProtocolFireAlarm) - sizeof(KOCOMProtocolHeader);
+	alarm.header.town = 0;
+	alarm.header.dong = 101;
+	alarm.header.ho = 101;
+	alarm.header.reserved = 0;
 
 	//화재 타입 정의
-	CString strMsg = _T("");
+	CString strFireType = _T("");
 	int nFireType = 0;
 	if (pData[SI_EVENT_BUF_COMMAND] == 'R')
 	{
-		strMsg = _T("화재 일괄 해제");
+		strFireType = _T("화재 일괄 해제");
 		nFireType = KOCOM_FIRE_ALARM_ALL_CLEAR;
 	}
 	else if((pData[SI_EVENT_BUF_COMMAND] == 'F') && (pData[SI_EVENT_BUF_FIRE_RECEIVER_1] == '0'))
 	{
 		if (pData[SI_EVENT_BUF_OCCUR_INFO] == 'N')
 		{
-			strMsg = _T("화재 발생");
+			strFireType = _T("화재 발생");
 			nFireType = KOCOM_FIRE_ALARM_FIRE_OCCURED;
 		}
 		else if (pData[SI_EVENT_BUF_OCCUR_INFO] == 'F')
 		{
-			strMsg = _T("화재 해제");
+			strFireType = _T("화재 해제");
 			nFireType = KOCOM_FIRE_ALARM_FIRE_CLEAR;
 		}
 		else
@@ -253,20 +257,77 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 
 	//건물 정보 - 회로 정보 매칭을 통해 위치 정보 확인
 	int nFDong = 101;
-	int nFHo = 0;
+	int nFHo = 101;
 	int nFFloor = 1;
 
+	//회로번호와 건물정보 매칭
+	CString strCircuitNo = _T("");
+	strCircuitNo = CCircuitLocInfo::Instance()->GetCircuitNo(pData);
+	
+	std::map<CString, CIRCUIT_LOC_INFO>::iterator iter;
+	iter = CCircuitLocInfo::Instance()->m_mapCircuitLocInfo.find(strCircuitNo);
+
+	if (nFireType != KOCOM_FIRE_ALARM_ALL_CLEAR)
+	{
+		alarm.header.dong = nFDong = atoi(iter->second.buildingName);
+	}
+
+	//일단 아파트 건물(101동, 102동 등의 건물이 아닌 주차장 등의 건물은 이벤트 안보내도록 하고 추후 협의
+	if (nFDong == 0)
+	{
+		Log::Trace("아파트 건물 외의 기타 건물의 화재 정보가 들어왔습니다. KOCOM 이벤트 전송을 하지 않습니다.");
+		return;
+	}
+
+	int nFloorType = -1;
+	nFloorType = CCircuitLocInfo::Instance()->CheckFloorType(iter->second.floor);
+
+	if (nFloorType == FLOOR_TYPE_BASEMENT )
+	{
+		nFFloor = atoi(&iter->second.floor[1]);
+		nFFloor *= -1;
+	}
+	else if(nFloorType == FLOOR_TYPE_PH)
+	{
+		nFFloor = atoi(&iter->second.floor[2]);
+	}
+	else
+	{
+		nFFloor = atoi(iter->second.floor);
+	}
+
+	//동정보
 	alarm.nAlarm = nFireType;
 	alarm.nFDong = nFDong;
 	alarm.nFHo = nFHo;
 	alarm.nFFloor = nFFloor;
-	strcpy_s(alarm.szFMsg, (CHAR*)pData);
 
-	CHAR cMsg[50];
-	memset(cMsg, NULL, 50);
-	strcpy_s(cMsg, CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
+	CString strMsg = _T("");
+	CString strTemp = _T("");
 
-	Log::Trace("%d동 %d호 %d층 - %s", nFDong, nFHo, nFFloor, cMsg);
+	strTemp.Format(_T("%s"), CCommonFunc::CharToWCHAR(iter->second.buildingName));
+	strMsg += strTemp;
+	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(iter->second.stair));
+	strMsg += strTemp;
+	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(iter->second.floor));
+	strMsg += strTemp;
+	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(iter->second.room));
+	strMsg += strTemp;
+	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(iter->second.circuitName));
+	strMsg += strTemp;
+
+	strcpy_s(alarm.szFMsg, CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
+
+	CHAR cMsg[80];
+	memset(cMsg, NULL, 80);
+	strcpy_s(cMsg, CCommonFunc::WCharToChar(strFireType.GetBuffer(0)));
+
+	if(nFloorType == FLOOR_TYPE_BASEMENT)
+		Log::Trace("%d동 B%d층 %s [%s]", nFDong, nFFloor * -1, cMsg, alarm.szFMsg);
+	else if(nFloorType == FLOOR_TYPE_NORMAL)
+		Log::Trace("%d동 %d층 %s [%s]", nFDong, nFFloor, cMsg, alarm.szFMsg);
+	else if(nFloorType == FLOOR_TYPE_PH)
+		Log::Trace("%d동 PH%d층 %s [%s]", nFDong, nFFloor, cMsg, alarm.szFMsg);
 
 	Send((BYTE*)&alarm, sizeof(KOCOMProtocolFireAlarm));
 }

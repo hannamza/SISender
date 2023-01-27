@@ -35,6 +35,6 @@ public:
 
 	BYTE m_eventBuf[SI_EVENT_BUF_SIZE];
 	void InitControl();
-	void MakeEventBuf();
+	BOOL MakeEventBuf();
 	afx_msg void OnSelchangeComboCommand();
 };

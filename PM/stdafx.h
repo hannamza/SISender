@@ -27,7 +27,7 @@
 #define		TIME_SLEEP(t, b) { DWORD cT=GetTickCount(); while(b && GetTickCount() - cT < t) Sleep(1); }
 
 #include "CommonDefines.h"
-#include "DeviceInfo.h"
+//#include "DeviceInfo.h"
 #include "TSingleton.h"
 #include "CriticalSectionEx.h"
 #include "Log.h"

@@ -39,9 +39,6 @@
     <ClInclude Include="Resource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="DeviceInfo.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="SerialComm.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -112,9 +109,6 @@
     </ClCompile>
     <ClCompile Include="..\Include\SM.cpp">
       <Filter>Include</Filter>
-    </ClCompile>
-    <ClCompile Include="DeviceInfo.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Log.cpp">
       <Filter>소스 파일</Filter>

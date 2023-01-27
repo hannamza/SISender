@@ -200,7 +200,6 @@
     <ClInclude Include="..\Protocol\CommonProtocol.h" />
     <ClInclude Include="Broker.h" />
     <ClInclude Include="BrokerDlg.h" />
-    <ClInclude Include="DeviceInfo.h" />
     <ClInclude Include="DlgEventTest.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Resource.h" />
@@ -217,7 +216,6 @@
     <ClCompile Include="..\Include\SM.cpp" />
     <ClCompile Include="Broker.cpp" />
     <ClCompile Include="BrokerDlg.cpp" />
-    <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="DlgEventTest.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="SerialComm.cpp" />

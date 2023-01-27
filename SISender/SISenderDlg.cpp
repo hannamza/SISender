@@ -143,13 +143,14 @@ BOOL CSISenderDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+
 	CCommonState::New();
 
 	//자신이 몇번째 SI_SENDER인지를 설정
 #ifndef TEST_MODE_FLAG
 	CCommonState::Instance()->m_nProcessIndex = _ttoi(theApp.m_lpCmdLine);
 #else
-	CCommonState::Instance()->m_nProcessIndex = 1;
+	CCommonState::Instance()->m_nProcessIndex = 2;
 #endif
 
 	Log::Setup();
@@ -236,6 +237,9 @@ BOOL CSISenderDlg::OnInitDialog()
 		break;
 	}
 	}
+
+	CCircuitLocInfo::New();
+	CCircuitLocInfo::Instance()->GetCircuitLocInfo();
 	
 	CClientInterface::New();
 	CClientInterface::Instance()->TryConnection(CCommonState::Instance()->m_szServerIP, CCommonState::Instance()->m_nPort);	// 20230111 GBM - INI에 기술된 외부업체 PORT로 들어가야 함
@@ -382,8 +386,25 @@ void CSISenderDlg::OnTimer(UINT_PTR nIDEvent)
 		}
 		case KOCOM:
 		{
-			CCommonState::Instance()->m_dwLastRecv = GetTickCount();
+			//CCommonState::Instance()->m_dwLastRecv = GetTickCount();
 			CClientInterface::Instance()->KOCOMProcessRequestAlive();
+
+			DWORD dw = GetTickCount();
+			if (dw - CCommonState::Instance()->m_dwLastRecv > 60 * 1000)	// 주기가 50초이므로 가장 마지막 keep alive ack 시간과 10초 마진을 보고 그 이상이면 상태이상으로 판단
+			{
+				Log::Trace("Kocom Keep Alive Ack Too Late!");
+				CSISenderDlg* pDlg = (CSISenderDlg*)AfxGetMainWnd();
+				if (pDlg != NULL)
+				{
+					// 		pDlg->m_bKilled = true;
+					// 		pDlg->OnMenuExit();
+					pDlg->PostMessage(WM_CLOSE);
+				}
+			}
+			else
+			{
+				//Log::Trace("Kocom Keep Alive Ack Received!");
+			}
 			break;
 		}
 		default:
@@ -708,6 +729,8 @@ void CSISenderDlg::OnDestroy()
 	CClientInterface::Delete();
 
 	CCommonState::Delete();
+
+	CCircuitLocInfo::Delete();
 
 	Log::Cleanup();
 

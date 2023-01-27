@@ -201,6 +201,7 @@
     <ClInclude Include="..\Include\SM.h" />
     <ClInclude Include="..\Include\TSingleton.h" />
     <ClInclude Include="..\Protocol\CommonProtocol.h" />
+    <ClInclude Include="CircuitLocInfo.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientInterface.h" />
     <ClInclude Include="ClientMan.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="..\Include\MinidumpHelp.cpp" />
     <ClCompile Include="..\Include\ReadWriteState.cpp" />
     <ClCompile Include="..\Include\SM.cpp" />
+    <ClCompile Include="CircuitLocInfo.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientInterface.cpp" />
     <ClCompile Include="ClientMan.cpp" />

@@ -215,19 +215,21 @@ void Client::KocomProcessResponseError(BYTE* pData)
 void Client::KocomProcessResponseAlive(BYTE* pData)
 {
 	DWORD dw = GetTickCount();
-	if (dw - CCommonState::Instance()->m_dwLastRecv > 10 * 1000)	// request 후 margin 10초 내
-	{
-		Log::Trace("Kocom Keep Alive Ack Too Late!");
-		CSISenderDlg* pDlg = (CSISenderDlg*)AfxGetMainWnd();
-		if (pDlg != NULL)
-		{
-			// 		pDlg->m_bKilled = true;
-			// 		pDlg->OnMenuExit();
-			pDlg->PostMessage(WM_CLOSE);
-		}
-	}
-	else
-	{
-		Log::Trace("Kocom Keep Alive Ack Received!");
-	}
+// 	if (dw - CCommonState::Instance()->m_dwLastRecv > 10 * 1000)	// request 후 margin 10초 내
+// 	{
+// 		Log::Trace("Kocom Keep Alive Ack Too Late!");
+// 		CSISenderDlg* pDlg = (CSISenderDlg*)AfxGetMainWnd();
+// 		if (pDlg != NULL)
+// 		{
+// 			// 		pDlg->m_bKilled = true;
+// 			// 		pDlg->OnMenuExit();
+// 			pDlg->PostMessage(WM_CLOSE);
+// 		}
+// 	}
+// 	else
+// 	{
+// 		//Log::Trace("Kocom Keep Alive Ack Received!");
+// 	}
+
+	CCommonState::Instance()->m_dwLastRecv = dw;
 }

@@ -62,17 +62,6 @@ BOOL CPMApp::InitInstance()
 
 	AfxInitRichEdit2();
 
-	TCHAR szPath[2048];
-	GetModuleFileName(NULL, szPath, 2048);
-	PathRemoveFileSpec(szPath);
-	CString strINI_Name;
-	strINI_Name.Format(_T("%s\\Setup.ini"), szPath);
-
-	TCHAR szTemp[32];
-	memset(szTemp, 0x00, sizeof(szTemp));
-	GetPrivateProfileString(L"DEBUG", L"DEBUG", L"N", szTemp, BUFF_SIZE, strINI_Name);
-	G_strDebug = szTemp;
-
 	// 대화 상자에 셸 트리 뷰 또는
 	// 셸 목록 뷰 컨트롤이 포함되어 있는 경우 셸 관리자를 만듭니다.
 	CShellManager *pShellManager = new CShellManager;

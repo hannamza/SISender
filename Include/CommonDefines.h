@@ -133,6 +133,8 @@ static const TCHAR* g_lpszSIName[] = {
 // 프로그램 창을 트레이로 보낼 때 사용되는 사용자 메세지 
 #define	WM_TRAY_NOTIFICATION	(WM_USER+1003)
 
+#define BUFF_SIZE 4096	//DeviceInfo.h에서 옮김
+
 // Test Flag - 디버깅 시 사용하기 위한 플래그로 세팅되면 
 // Broker와 SISender가 SM processRun에 따라 종료하지 않고
 // SISender의 실행 시 인덱스를 PM으로부터 받지 않으므로 1로 고정

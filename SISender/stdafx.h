@@ -29,6 +29,8 @@
 
 //#define		WM_TRAY_NOTIFICATION		(WM_USER+1003)
 
+#include <map>
+
 #include "CommonDefines.h"
 #include "DeviceInfo.h"
 #include "TSingleton.h"
@@ -43,6 +45,7 @@
 #include "ReadWriteState.h"
 #include "SM.h"
 #include "intrin.h"
+#include "CircuitLocInfo.h"
 
 #define STX       0x02
 #define ETX       0x03

@@ -198,7 +198,6 @@
     <ClInclude Include="..\Include\SM.h" />
     <ClInclude Include="..\Include\TSingleton.h" />
     <ClInclude Include="..\Protocol\CommonProtocol.h" />
-    <ClInclude Include="DeviceInfo.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="PM.h" />
     <ClInclude Include="PMDlg.h" />
@@ -214,7 +213,6 @@
     <ClCompile Include="..\Include\MinidumpHelp.cpp" />
     <ClCompile Include="..\Include\ReadWriteState.cpp" />
     <ClCompile Include="..\Include\SM.cpp" />
-    <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="PM.cpp" />
     <ClCompile Include="PMDlg.cpp" />
