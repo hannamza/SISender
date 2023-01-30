@@ -239,7 +239,32 @@ BOOL CSISenderDlg::OnInitDialog()
 	}
 
 	CCircuitLocInfo::New();
-	CCircuitLocInfo::Instance()->GetCircuitLocInfo();
+
+	BOOL bSucceed = FALSE;
+	bSucceed = CCircuitLocInfo::Instance()->GetCircuitLocInfoFromCSVFile();
+
+	if (!bSucceed)
+	{
+		CStringArray strArr;
+		strArr.RemoveAll();
+		CCircuitLocInfo::Instance()->GetLocationTxtList(strArr);
+
+		if (strArr.GetSize() == 0)
+		{
+			Log::Trace("회로 위치 정보 파일을 읽는 데에 실패했습니다. 프로그램을 종료합니다.");
+			AfxGetApp()->m_pMainWnd->PostMessageW(WM_QUIT);
+			return FALSE;
+		}
+
+		CCircuitLocInfo::Instance()->GetCircuitLocInfoFromTxtFile(strArr);
+
+		if (CCircuitLocInfo::Instance()->m_mapCircuitLocInfo.size() == 0)
+		{
+			Log::Trace("회로 위치 정보를 읽는 데에 실패했습니다. 프로그램을 종료합니다.");
+			AfxGetApp()->m_pMainWnd->PostMessageW(WM_QUIT);
+			return FALSE;
+		}
+	}
 	
 	CClientInterface::New();
 	CClientInterface::Instance()->TryConnection(CCommonState::Instance()->m_szServerIP, CCommonState::Instance()->m_nPort);	// 20230111 GBM - INI에 기술된 외부업체 PORT로 들어가야 함

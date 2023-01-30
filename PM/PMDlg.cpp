@@ -342,7 +342,11 @@ void CPMDlg::KillAllExe()
 	{
 		strProcessName.Format(_T("%s"), (*iter)->processName);
 		strProcessNameOnly = CCommonFunc::GetFileNameOnly(strProcessName);
-		Log::Trace("[%s] 기존 프로세스 종료!", CCommonFunc::WCharToChar(strProcessNameOnly.GetBuffer(0)));
+
+		if (nCnt >= SI_SENDER1 && nCnt <= SI_SENDER3)
+			Log::Trace("[%s %d] 기존 프로세스 종료!", CCommonFunc::WCharToChar(strProcessNameOnly.GetBuffer(0)), nCnt);
+		else
+			Log::Trace("[%s] 기존 프로세스 종료!", CCommonFunc::WCharToChar(strProcessNameOnly.GetBuffer(0)));	
 
 		if ((*iter)->processId != 0)
 		{

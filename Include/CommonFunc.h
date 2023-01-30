@@ -56,6 +56,7 @@ public:
 	~CCommonFunc(void);
 
 public:
+	static float GetPreciseDeltaTime(LARGE_INTEGER startTime, LARGE_INTEGER endTime);
 	static UINT GetTimerCount();
 	static void IncreaseTimerCount();
 	static UINT GetCaptureCount();

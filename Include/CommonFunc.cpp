@@ -15,6 +15,16 @@ CCommonFunc::~CCommonFunc(void)
 {
 }
 
+float CCommonFunc::GetPreciseDeltaTime(LARGE_INTEGER startTime, LARGE_INTEGER endTime)
+{
+	LARGE_INTEGER timer;
+	float DeltaTime;
+
+	QueryPerformanceFrequency(&timer);
+
+	return DeltaTime = (endTime.QuadPart - startTime.QuadPart) / (float)timer.QuadPart;
+}
+
 UINT CCommonFunc::GetTimerCount()
 {
 	return g_nTimerCount;
