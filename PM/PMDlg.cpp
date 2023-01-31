@@ -280,7 +280,7 @@ BOOL CPMDlg::InitProcessInfo()
 				//최소 하나의 SI_SENDER 설정이 있어야 하므로 첫번째에 TYPE정보를 못 가져오면 ini를 못찾은 것으로 판단하고 프로그램 종료
 				if (i == SI_SENDER1)
 				{
-					return FALSE;
+					//return FALSE;
 				}
 
 				pPInfo->use = false;
