@@ -266,8 +266,8 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 	strCircuitNo = CCircuitLocInfo::Instance()->GetCircuitNo(pData);
 
 	std::map<CString, CIRCUIT_LOC_INFO>::iterator iter;
-
-	//수신기 복구는 위치정보에 없음
+	CIRCUIT_LOC_INFO cli;
+	//수신기 복구는 위치정보에 없음, 
 	if (strCircuitNo.Compare(_T("00000000")) != 0)
 	{
 		iter = CCircuitLocInfo::Instance()->m_mapCircuitLocInfo.find(strCircuitNo);
@@ -275,34 +275,43 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 		//위치정보에서 찾으면 
 		if (iter != CCircuitLocInfo::Instance()->m_mapCircuitLocInfo.end())
 		{
+			cli = iter->second;
 			if (nFireType != KOCOM_FIRE_ALARM_ALL_CLEAR)
 			{
-				alarm.header.dong = nFDong = atoi(iter->second.buildingName);
+				alarm.header.dong = nFDong = atoi(cli.buildingName);
 			}
 
 			//일단 아파트 건물(101동, 102동 등의 건물이 아닌 주차장 등의 건물은 이벤트 안보내도록 하고 추후 협의
-			if (nFDong == 0)
-			{
-				Log::Trace("아파트 건물 외의 기타 건물의 화재 정보가 들어왔습니다. KOCOM 이벤트 전송을 하지 않습니다.");
-				return;
-			}
+// 			if (nFDong == 0)
+// 			{
+// 				Log::Trace("아파트 건물 외의 기타 건물의 화재 정보가 들어왔습니다. KOCOM 이벤트 전송을 하지 않습니다.");
+// 				return;
+// 			}
 
-			nFloorType = CCircuitLocInfo::Instance()->CheckFloorType(iter->second.floor);
+			nFloorType = CCircuitLocInfo::Instance()->CheckFloorType(cli.floor);
 
 			if (nFloorType == FLOOR_TYPE_BASEMENT)
 			{
-				nFFloor = atoi(&iter->second.floor[1]);
+				nFFloor = atoi(&cli.floor[1]);
 				nFFloor *= -1;
 			}
 			else if (nFloorType == FLOOR_TYPE_PH)
 			{
-				nFFloor = atoi(&iter->second.floor[2]);
+				nFFloor = atoi(&cli.floor[2]);
 			}
 			else
 			{
-				nFFloor = atoi(iter->second.floor);
+				nFFloor = atoi(cli.floor);
 			}
 		}
+	}
+	else //수신기 복구의 경우 빈 정보를 채움
+	{
+		strcpy(cli.buildingName, "");
+		strcpy(cli.circuitName, "");
+		strcpy(cli.stair, "");
+		strcpy(cli.floor, "");
+		strcpy(cli.room, "");
 	}
 	
 	//동정보
@@ -314,15 +323,15 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 	CString strMsg = _T("");
 	CString strTemp = _T("");
 
-	strTemp.Format(_T("%s"), CCommonFunc::CharToWCHAR(iter->second.buildingName));
+	strTemp.Format(_T("%s"), CCommonFunc::CharToWCHAR(cli.buildingName));
 	strMsg += strTemp;
-	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(iter->second.stair));
+	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(cli.stair));
 	strMsg += strTemp;
-	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(iter->second.floor));
+	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(cli.floor));
 	strMsg += strTemp;
-	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(iter->second.room));
+	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(cli.room));
 	strMsg += strTemp;
-	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(iter->second.circuitName));
+	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(cli.circuitName));
 	strMsg += strTemp;
 
 	strcpy_s(alarm.szFMsg, CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));

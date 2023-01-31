@@ -73,6 +73,7 @@ BEGIN_MESSAGE_MAP(CPMDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -598,10 +599,15 @@ void CPMDlg::OnTimer(UINT_PTR nIDEvent)
 				strProcessName.Format(_T("%s"), (*iter)->processName);
 				strProcessNameOnly = CCommonFunc::GetFileNameOnly(strProcessName);
 
+				if ((nCnt >= SI_SENDER1) && (nCnt <= SI_SENDER3))
+				{
+					strProcessNameOnly.Format(_T("%s %d"), strProcessNameOnly, nCnt);
+				}
+
 				//프로세스 아이디 못받으면 못살린 걸로 판단
 				if ((*iter)->processId != 0)
 				{
-					bAlive = true;					
+					bAlive = true;
 					Log::Trace("[%s] PM에 의해 재시작 성공", CCommonFunc::WCharToChar(strProcessNameOnly.GetBuffer(0)));
 				}
 				else
@@ -670,4 +676,15 @@ void CPMDlg::QuitGracefullyAllExe()
 	}
 
 	Sleep(1000);
+}
+
+void CPMDlg::OnClose()
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if (AfxMessageBox(_T("정말로 PM을 종료하시겠습니까?"), MB_YESNO | MB_ICONWARNING) == IDNO)
+	{
+		return;
+	}
+
+	CDialogEx::OnClose();
 }
