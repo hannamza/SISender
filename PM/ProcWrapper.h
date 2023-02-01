@@ -3,6 +3,9 @@
 
 #include <process.h>
 
+#include <psapi.h>
+#include <processthreadsapi.h>
+
 enum _USER_MSG {
 	WM_APPLICATION_SHOW = WM_USER + 100,
 	WM_APPLICATION_HIDE,
@@ -46,4 +49,9 @@ public:
 	bool existProcess(const TCHAR *in);
 	int existProcess_pidReturn(const TCHAR *in);
 	int existProcess_processCountReturn(const TCHAR *in);
+
+	//Process ID 찾는 매서드, 프로세스 죽일 때는 무조건 이 매서드로 Process ID 찾아서 죽여야 함 (프로그램 이름으로는 잘 안됨)
+	DWORD GetProcessIDByFileName(LPWSTR name);
+
+	BOOL GetProcessIDsByFileName(LPWSTR name, std::vector<DWORD>& vecProcessID);
 };

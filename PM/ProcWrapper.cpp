@@ -412,7 +412,7 @@ void CProcWrapper::SoftKillProcess(const TCHAR *in)
 
 	hProcess = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 );
 	pe32.dwSize = sizeof( PROCESSENTRY32 );
-	if( Process32First( hProcess, &pe32 ) )
+	if( Process32First( hProcess, &pe32 ))
 	{
 		do
 		{
@@ -940,4 +940,55 @@ int CProcWrapper::existProcess_processCountReturn(const TCHAR *in)
 	CloseHandle(hProcess);
 
 	return proc_cnt;
+}
+
+DWORD CProcWrapper::GetProcessIDByFileName(LPWSTR name)
+{
+	DWORD process_id_array[1024];
+	DWORD bytes_returned;
+	DWORD num_processes;
+	HANDLE hProcess;
+	WCHAR image_name[MAX_PATH] = { 0, };
+
+	DWORD i;
+	EnumProcesses(process_id_array, 1024 * sizeof(DWORD), &bytes_returned);
+	num_processes = (bytes_returned / sizeof(DWORD));
+	for (i = 0; i < num_processes; i++) {
+		hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, process_id_array[i]);
+		if (GetModuleBaseName(hProcess, 0, image_name, 256)) {
+			if (!wcscmp(image_name, name)) {
+				CloseHandle(hProcess);
+				return process_id_array[i];
+			}
+		}
+		CloseHandle(hProcess);
+	}
+	return 0;
+}
+
+BOOL CProcWrapper::GetProcessIDsByFileName(LPWSTR name, std::vector<DWORD>& vecProcessID)
+{
+	BOOL bRet = FALSE;
+
+	DWORD process_id_array[1024];
+	DWORD bytes_returned;
+	DWORD num_processes;
+	HANDLE hProcess;
+	WCHAR image_name[MAX_PATH] = { 0, };
+
+	DWORD i;
+	EnumProcesses(process_id_array, 1024 * sizeof(DWORD), &bytes_returned);
+	num_processes = (bytes_returned / sizeof(DWORD));
+	for (i = 0; i < num_processes; i++) {
+		hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, process_id_array[i]);
+		if (GetModuleBaseName(hProcess, 0, image_name, 256)) {
+			if (!wcscmp(image_name, name)) {
+				vecProcessID.push_back(process_id_array[i]);
+				bRet = TRUE;
+			}
+		}
+		CloseHandle(hProcess);
+	}
+
+	return bRet;
 }

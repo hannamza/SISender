@@ -282,11 +282,11 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 			}
 
 			//일단 아파트 건물(101동, 102동 등의 건물이 아닌 주차장 등의 건물은 이벤트 안보내도록 하고 추후 협의
-// 			if (nFDong == 0)
-// 			{
-// 				Log::Trace("아파트 건물 외의 기타 건물의 화재 정보가 들어왔습니다. KOCOM 이벤트 전송을 하지 않습니다.");
-// 				return;
-// 			}
+			if (nFDong == 0)
+			{
+				Log::Trace("아파트 건물 외의 기타 건물의 화재 정보가 들어왔습니다. KOCOM 이벤트 전송을 하지 않습니다.");
+				return;
+			}
 
 			nFloorType = CCircuitLocInfo::Instance()->CheckFloorType(cli.floor);
 

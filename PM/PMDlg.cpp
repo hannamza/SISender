@@ -55,6 +55,7 @@ CPMDlg::CPMDlg(CWnd* pParent /*=NULL*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	memset(m_nPreAliveCount, 0, sizeof(ULONGLONG) * PROCESS_TOTAL_COUNT);
+	m_bDupExecute = false;
 }
 
 void CPMDlg::DoDataExchange(CDataExchange* pDX)
@@ -138,20 +139,11 @@ BOOL CPMDlg::OnInitDialog()
 
 	Log::Trace("INI 설정 로드 완료!");
 
- 	//CProcWrapper::New();
+	InitControl();
+
+	//QuitGracefullyAllExe();
 
  	KillAllExe();
-
-	CString strPMName = _T("");
-	strPMName = CCommonFunc::GetFileNameOnly(CCommonFunc::GetProgramPath());
-	if (m_pw.existProcess_processCountReturn(strPMName) > 1)
-	{
-		Log::Trace("이미 PM이 실행되고 있어 종료합니다.");
-		AfxGetApp()->m_pMainWnd->PostMessageW(WM_QUIT);
-		return FALSE;
-	}
-
-	InitControl();
 
 	BOOL bExcuteComplete = FALSE;
 	bExcuteComplete = ExcuteAllExe();
@@ -335,6 +327,9 @@ void CPMDlg::KillAllExe()
 {
 	std::vector<PROCESS_INFO*>::iterator iter;
 	iter = m_vecProcessInfo.begin();
+
+	std::vector<DWORD> vecProcessID;
+	std::vector<DWORD>::iterator iterPID;
 	CString strProcessNameOnly = _T("");
 	CString strProcessName = _T("");
 
@@ -344,19 +339,25 @@ void CPMDlg::KillAllExe()
 		strProcessName.Format(_T("%s"), (*iter)->processName);
 		strProcessNameOnly = CCommonFunc::GetFileNameOnly(strProcessName);
 
-		if (nCnt >= SI_SENDER1 && nCnt <= SI_SENDER3)
-			Log::Trace("[%s %d] 기존 프로세스 종료!", CCommonFunc::WCharToChar(strProcessNameOnly.GetBuffer(0)), nCnt);
-		else
-			Log::Trace("[%s] 기존 프로세스 종료!", CCommonFunc::WCharToChar(strProcessNameOnly.GetBuffer(0)));	
-
-		if ((*iter)->processId != 0)
+		if (nCnt >= SI_SENDER2 && nCnt <= SI_SENDER3)
 		{
-			m_pw.SoftKillProcess((*iter)->processId);
+			nCnt++;
+			continue;
 		}
-		else
+
+		vecProcessID.clear();
+		BOOL bProcessIDFound = FALSE;
+		bProcessIDFound = m_pw.GetProcessIDsByFileName(strProcessNameOnly.GetBuffer(0), vecProcessID);
+
+		if (bProcessIDFound)
 		{
-			m_pw.SoftKillProcess((*iter)->processName);
-			m_pw.ForceKillProcess((*iter)->processName);
+			iterPID = vecProcessID.begin();
+			for (; iterPID != vecProcessID.end(); iterPID++)
+			{
+				m_pw.SoftKillProcess(*iterPID);
+			}
+			strProcessNameOnly = strProcessNameOnly.Left(strProcessNameOnly.GetLength() - 4);
+			Log::Trace("[%s] 기존 프로세스 종료!", CCommonFunc::WCharToChar(strProcessNameOnly.GetBuffer(0)));
 		}
 
 		nCnt++;
@@ -382,7 +383,8 @@ void CPMDlg::OnDestroy()
 
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 
-	QuitGracefullyAllExe();
+	if(!m_bDupExecute)
+		QuitGracefullyAllExe();
 
 	ReleaseProcessInfo();
 
@@ -505,6 +507,7 @@ BOOL CPMDlg::ExcuteAllExe()
 			{
 				(*iter)->processId = nProcessId;
 				m_ctrlListProcess.SetItem(nUse, 3, LVIF_TEXT, _T("Running"), NULL, NULL, NULL, NULL);
+				//PostMessageW(LIST_MESSAGE, (WPARAM)nUse, true);
 				CSM::WriteProcessRunToSharedMemory(nCnt, true);
 			}
 			else
@@ -531,9 +534,6 @@ void CPMDlg::OnTimer(UINT_PTR nIDEvent)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	if (nIDEvent == TIMER_PROCESS_CHECK_ID)
 	{
-		CString strProcessName = _T("");
-		CString strProcessNameOnly = _T("");
-
 		std::vector<PROCESS_INFO*>::iterator iter;
 		iter = m_vecProcessInfo.begin();
 
@@ -541,6 +541,13 @@ void CPMDlg::OnTimer(UINT_PTR nIDEvent)
 		int nListRow = 0;
 		for (; iter != m_vecProcessInfo.end(); iter++)
 		{
+			CString strProcessName = _T("");
+			CString strProcessNameOnly = _T("");
+
+			strProcessName.Format(_T("%s"), (*iter)->processName);
+			strProcessNameOnly = CCommonFunc::GetFileNameOnly(strProcessName);
+			strProcessNameOnly = strProcessNameOnly.Left(strProcessNameOnly.GetLength() - 4);
+
 			if ((*iter)->use == false)
 			{
 				nCnt++;
@@ -575,7 +582,22 @@ void CPMDlg::OnTimer(UINT_PTR nIDEvent)
 				}
 				else
 				{
-					m_pw.ForceKillProcess((*iter)->processName);
+					//관리 프로세스 들의 루프를 다 돌고 나서는 괜찮지만 SISender중에 use인 것들 중 하나가 문제가 생기면 일단 다 죽이기 문제가 있음(프로세스명이 같기 때문)
+					std::vector<DWORD> vecProcessID;
+					std::vector<DWORD>::iterator iterPID;
+
+					vecProcessID.clear();
+					BOOL bProcessIDFound = FALSE;
+					bProcessIDFound = m_pw.GetProcessIDsByFileName(strProcessNameOnly.GetBuffer(0), vecProcessID);
+
+					if (bProcessIDFound)
+					{
+						iterPID = vecProcessID.begin();
+						for (; iterPID != vecProcessID.end(); iterPID++)
+						{
+							m_pw.SoftKillProcess(*iterPID);
+						}
+					}
 				}
 
 				PostMessageW(LIST_MESSAGE, (WPARAM)nListRow, (LPARAM)bAlive);
@@ -595,9 +617,6 @@ void CPMDlg::OnTimer(UINT_PTR nIDEvent)
 				{
 					(*iter)->processId = m_pw.RunProcessAndForget(NULL, (*iter)->processName, &ret);
 				}
-
-				strProcessName.Format(_T("%s"), (*iter)->processName);
-				strProcessNameOnly = CCommonFunc::GetFileNameOnly(strProcessName);
 
 				if ((nCnt >= SI_SENDER1) && (nCnt <= SI_SENDER3))
 				{
@@ -674,8 +693,6 @@ void CPMDlg::QuitGracefullyAllExe()
 
 		nCnt++;
 	}
-
-	Sleep(1000);
 }
 
 void CPMDlg::OnClose()

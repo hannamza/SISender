@@ -26,6 +26,8 @@
 #define		SAFE_DELETE(p) { if(p) { delete (p); (p)=NULL; } }
 #define		TIME_SLEEP(t, b) { DWORD cT=GetTickCount(); while(b && GetTickCount() - cT < t) Sleep(1); }
 
+#include <vector>
+
 #include "CommonDefines.h"
 //#include "DeviceInfo.h"
 #include "TSingleton.h"
@@ -37,8 +39,6 @@
 #include "ReadWriteState.h"
 #include "SM.h"
 #include "ProcWrapper.h"
-
-#include <vector>
 
 #define STX       0x02
 #define ETX       0x03

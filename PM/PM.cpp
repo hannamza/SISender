@@ -54,6 +54,22 @@ BOOL CPMApp::InitInstance()
 
 	CWinApp::InitInstance();
 
+	//PM 중복 실행 검사 
+	TCHAR szFilename[MAX_PATH + 1] = { 0 };
+	GetModuleFileName(NULL, szFilename, MAX_PATH);
+	CString strModulePath = szFilename;
+	CString strProgramName = PathFindFileName(szFilename);
+	strProgramName = strProgramName.Left(strProgramName.GetLength() - 4);	//.exe 부분 제거
+
+	HWND h_wnd = ::FindWindow(NULL, strProgramName);
+	if (h_wnd != NULL)
+	{
+		CString strMsg;
+		strMsg.Format(L"%s이 이미 실행 중입니다.", strProgramName);
+		AfxMessageBox(strMsg);
+		return FALSE;
+	}
+	//
 
 	MinidumpHelp _MiniDump;
 	_MiniDump.install_self_mini_dump();

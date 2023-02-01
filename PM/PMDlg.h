@@ -47,6 +47,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	bool m_bSMCheck;
+	bool m_bDupExecute;
 	CListCtrl m_ctrlListProcess;
 	std::vector<PROCESS_INFO*> m_vecProcessInfo;
 	CProcWrapper m_pw;
