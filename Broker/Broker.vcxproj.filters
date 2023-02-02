@@ -16,9 +16,6 @@
     <Filter Include="Include">
       <UniqueIdentifier>{675cb7df-e069-460b-a63d-62833a4bf608}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Protocol">
-      <UniqueIdentifier>{e4005c3e-a92b-429c-830f-285bd422117a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -65,9 +62,6 @@
     </ClInclude>
     <ClInclude Include="..\Include\TSingleton.h">
       <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Protocol\CommonProtocol.h">
-      <Filter>Protocol</Filter>
     </ClInclude>
     <ClInclude Include="Log.h">
       <Filter>헤더 파일</Filter>

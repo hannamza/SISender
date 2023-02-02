@@ -197,7 +197,6 @@
     <ClInclude Include="..\Include\ReadWriteState.h" />
     <ClInclude Include="..\Include\SM.h" />
     <ClInclude Include="..\Include\TSingleton.h" />
-    <ClInclude Include="..\Protocol\CommonProtocol.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="PM.h" />
     <ClInclude Include="PMDlg.h" />

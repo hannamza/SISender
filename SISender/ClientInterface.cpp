@@ -247,11 +247,13 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 		}
 		else
 		{
+			Log::Trace("화재 타입이 아닌 이벤트가 들어왔습니다. KOCOM 이벤트 전송을 하지 않습니다.");
 			return;		// N이나 F가 아니면 리턴
 		}
 	}
 	else
 	{
+		Log::Trace("화재 타입이나 수신기 복구 이외의 이벤트가 들어왔습니다. KOCOM 이벤트 전송을 하지 않습니다.");
 		return;		//화재 타입이나 수신기 복구가 아니면 리턴
 	}
 
@@ -281,7 +283,7 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 				alarm.header.dong = nFDong = atoi(cli.buildingName);
 			}
 
-			//일단 아파트 건물(101동, 102동 등의 건물이 아닌 주차장 등의 건물은 이벤트 안보내도록 하고 추후 협의
+			//일단 아파트 건물(101동, 102동 등의 건물이 아닌 주차장 등의 건물은 이벤트 안보내도록 코콤과 협의됨)
 			if (nFDong == 0)
 			{
 				Log::Trace("아파트 건물 외의 기타 건물의 화재 정보가 들어왔습니다. KOCOM 이벤트 전송을 하지 않습니다.");
@@ -291,13 +293,13 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 			nFloorType = CCircuitLocInfo::Instance()->CheckFloorType(cli.floor);
 
 			if (nFloorType == FLOOR_TYPE_BASEMENT)
-			{
-				nFFloor = atoi(&cli.floor[1]);
+			{	
+				nFFloor = atoi(&cli.floor[1]);	// B 이후 숫자 
 				nFFloor *= -1;
 			}
-			else if (nFloorType == FLOOR_TYPE_PH)
+			else if (nFloorType == FLOOR_TYPE_PH)	// 코콤은 층이 큰 의미가 없고 옥탑층 개념이 없지만 일단 옥탑층 정보를 얻도록 함
 			{
-				nFFloor = atoi(&cli.floor[2]);
+				nFFloor = atoi(&cli.floor[2]);	// PH 이후 숫자
 			}
 			else
 			{

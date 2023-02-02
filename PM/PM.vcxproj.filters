@@ -16,9 +16,6 @@
     <Filter Include="Include">
       <UniqueIdentifier>{e055647c-dac6-47ac-84f7-99877ba8be70}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Protocol">
-      <UniqueIdentifier>{9a97e575-4a3d-41c1-b6a4-c4b088b22b8a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="PMLib">
       <UniqueIdentifier>{d329e1ab-0bcb-4644-8a46-7812794bb735}</UniqueIdentifier>
     </Filter>
@@ -71,9 +68,6 @@
     </ClInclude>
     <ClInclude Include="Log.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Protocol\CommonProtocol.h">
-      <Filter>Protocol</Filter>
     </ClInclude>
     <ClInclude Include="ProcWrapper.h">
       <Filter>PMLib</Filter>
