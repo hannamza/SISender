@@ -815,7 +815,6 @@ CString CProcWrapper::GetProcCommandLine(int nPid)
 	return sResult;
 }
 
-// JYS 16.01.06 중복 실행 오류 <ADD.S>
 BOOL CProcWrapper::OpenProc(int nPid)
 {
 	HANDLE processHandle;
@@ -834,7 +833,6 @@ BOOL CProcWrapper::OpenProc(int nPid)
 
 	return TRUE;
 }
-// JYS 16.01.06 중복 실행 오류 <ADD.E>
 
 bool CProcWrapper::existProcess(int nPid)
 {
@@ -991,4 +989,11 @@ BOOL CProcWrapper::GetProcessIDsByFileName(LPWSTR name, std::vector<DWORD>& vecP
 	}
 
 	return bRet;
+}
+
+void CProcWrapper::ForceKillProcess(DWORD nProcessID)
+{
+	HANDLE ps = OpenProcess(SYNCHRONIZE | PROCESS_TERMINATE, FALSE, nProcessID);
+	TerminateProcess(ps, 0);
+	CloseHandle(ps);
 }

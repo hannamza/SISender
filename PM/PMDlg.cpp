@@ -354,7 +354,7 @@ void CPMDlg::KillAllExe()
 			iterPID = vecProcessID.begin();
 			for (; iterPID != vecProcessID.end(); iterPID++)
 			{
-				m_pw.SoftKillProcess(*iterPID);
+				m_pw.ForceKillProcess(*iterPID);
 			}
 			strProcessNameOnly = strProcessNameOnly.Left(strProcessNameOnly.GetLength() - 4);
 			Log::Trace("[%s] 기존 프로세스 종료!", CCommonFunc::WCharToChar(strProcessNameOnly.GetBuffer(0)));
@@ -582,22 +582,24 @@ void CPMDlg::OnTimer(UINT_PTR nIDEvent)
 				}
 				else
 				{
+					//애초 시작할 때 processID를 얻는다는 전제로 시작하므로 이 루틴은 처리하지 않음
+
 					//관리 프로세스 들의 루프를 다 돌고 나서는 괜찮지만 SISender중에 use인 것들 중 하나가 문제가 생기면 일단 다 죽이기 문제가 있음(프로세스명이 같기 때문)
-					std::vector<DWORD> vecProcessID;
-					std::vector<DWORD>::iterator iterPID;
-
-					vecProcessID.clear();
-					BOOL bProcessIDFound = FALSE;
-					bProcessIDFound = m_pw.GetProcessIDsByFileName(strProcessNameOnly.GetBuffer(0), vecProcessID);
-
-					if (bProcessIDFound)
-					{
-						iterPID = vecProcessID.begin();
-						for (; iterPID != vecProcessID.end(); iterPID++)
-						{
-							m_pw.SoftKillProcess(*iterPID);
-						}
-					}
+// 					std::vector<DWORD> vecProcessID;
+// 					std::vector<DWORD>::iterator iterPID;
+// 
+// 					vecProcessID.clear();
+// 					BOOL bProcessIDFound = FALSE;
+// 					bProcessIDFound = m_pw.GetProcessIDsByFileName(strProcessNameOnly.GetBuffer(0), vecProcessID);
+// 
+// 					if (bProcessIDFound)
+// 					{
+// 						iterPID = vecProcessID.begin();
+// 						for (; iterPID != vecProcessID.end(); iterPID++)
+// 						{
+// 							m_pw.SoftKillProcess(*iterPID);
+// 						}
+// 					}
 				}
 
 				PostMessageW(LIST_MESSAGE, (WPARAM)nListRow, (LPARAM)bAlive);

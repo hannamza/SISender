@@ -43,7 +43,7 @@ public:
 	PVOID GetPebAddress(HANDLE ProcessHandle);
 	CString GetProcCommandLine(int nPid);
 	BOOL IsFindProc(int nPid, CString sPName);
-	BOOL OpenProc(int nPid); // JYS 16.01.06 중복 실행 오류 <ADD.L>
+	BOOL OpenProc(int nPid);
 
 	bool existProcess(int nPid);
 	bool existProcess(const TCHAR *in);
@@ -54,4 +54,7 @@ public:
 	DWORD GetProcessIDByFileName(LPWSTR name);
 
 	BOOL GetProcessIDsByFileName(LPWSTR name, std::vector<DWORD>& vecProcessID);
+
+	//Process ID로 Terminate 하는 매서드 추가 (overload), softkill로는 잘 안됨
+	void ForceKillProcess(DWORD nProcessID);
 };
