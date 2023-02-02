@@ -4,6 +4,7 @@
 enum {
 	SI_TEST,
 	KOCOM,
+	SI_TOTAL_COUNT
 };
 
 //SI Sender 프로세스 

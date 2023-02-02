@@ -1628,3 +1628,16 @@ CString CCommonFunc::GetFileNameOnly(CString strPath)
 	strFileName = strPath.Right(strPath.GetLength() - strPath.ReverseFind('\\') - 1);
 	return strFileName;
 }
+
+CString CCommonFunc::GetProgramVersion()
+{
+	CString strProgramVersion = _T("");
+	CString strDate, strTime;
+
+	strDate.Format(_T("%s"), CCommonFunc::CharToTCHAR(__DATE__));
+	strTime.Format(_T("%s"), CCommonFunc::CharToTCHAR(__TIME__));
+
+	strProgramVersion.Format(_T("%s %s"), strDate, strTime);
+
+	return strProgramVersion;
+}

@@ -156,4 +156,6 @@ public:
 	static CString GetProgramPath();
 	static CString GetProgramDir();
 	static CString GetFileNameOnly(CString strPath);
+
+	static CString GetProgramVersion();
 };

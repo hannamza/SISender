@@ -55,6 +55,7 @@ public:
 
 	CRichEditCtrl m_richLog;
 	
+	void ShowProgramVersion();
 	BOOL InitProcessInfo();
 	void KillAllExe();
 	void ReleaseProcessInfo();

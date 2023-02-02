@@ -109,6 +109,9 @@ BOOL CPMDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
+	//프로그램 버전 표시
+	ShowProgramVersion();
+
 	Log::Setup();
 	Log::SetMainPointer(this);
 
@@ -222,6 +225,33 @@ BOOL CPMDlg::PreTranslateMessage(MSG* pMsg)
 	}
 
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+void CPMDlg::ShowProgramVersion()
+{
+	CString strVersionInfo = _T("");
+	CString strProgramVersion = _T("");
+
+	strProgramVersion = CCommonFunc::GetProgramVersion();
+
+	CString strProtocol = _T("");
+	for (int nSI = 0; nSI < SI_TOTAL_COUNT; nSI++)
+	{
+		if (nSI == SI_TEST)
+			continue;
+
+		CString strTemp = _T("");
+		strTemp.Format(_T("%s"), g_lpszSIName[nSI]);
+
+		strProtocol += strTemp;
+		if (nSI != SI_TOTAL_COUNT - 1)
+			strProtocol += _T(" ");
+
+	}
+
+	strVersionInfo.Format(_T("Program Ver : [%s] 현재 지원 Protocol : [%s]"), strProgramVersion, strProtocol);
+	CStatic* pStatic = (CStatic*)GetDlgItem(IDC_STATIC_PROGRAM_VERSION);
+	pStatic->SetWindowTextW(strVersionInfo);
 }
 
 BOOL CPMDlg::InitProcessInfo()
