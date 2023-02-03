@@ -4,6 +4,7 @@
 
 CCommonState::CCommonState()
 {
+	m_bLoginResult = false;
 	m_nProcessIndex = 0;
 	m_nSIType = 0;
 	m_nIdx = 0;

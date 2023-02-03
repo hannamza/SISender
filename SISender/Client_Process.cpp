@@ -143,7 +143,7 @@ void Client::KocomWorkerProcessRecvPacket(BYTE* pPacket, int nSize)
 	}
 	case KOCOM_FIRE_TYPE | KOCOM_MSG_ALIVE_ACK:
 		//nResult 값이 기존 값과 변경되었는지 확인, 이후 시간값이 너무 벌어져 있지 않은지 확인
-		KocomProcessResponseAlive(pData);
+		KocomProcessResponseAlive(buffer);
 		break;
 	case KOCOM_FIRE_TYPE | KOCOM_MSG_FIRE_ALARM_ACK:
 		Log::Trace("Kocom Fire Alarm Ack Received!");
@@ -152,7 +152,7 @@ void Client::KocomWorkerProcessRecvPacket(BYTE* pPacket, int nSize)
 // 		int nResult;
 // 		memcpy_s(&nResult, sizeof(int), &buffer[sizeof(KOCOMProtocolHeader)], sizeof(int));
 // 		Log::Trace("Kocom Error Ack Received! - nResult : %d", nResult);
-		KocomProcessResponseError(pData);
+		KocomProcessResponseError(buffer);
 	default:
 		break;
 	}
@@ -170,9 +170,10 @@ void Client::KocomProcessResponseError(BYTE* pData)
 
 	switch (nResult)
 	{
-	case KOCOM_ERROR_AUTH_FAIL_ID:
+	case KOCOM_ERROR_AUTH_FAIL_ID:	//실제로는 PW가 잘못되어도 Kocom 서버가 이걸로 보내므로 메세지 수정
 	{
-		Log::Trace("Kocom Error - ID is Wrong!");
+		//Log::Trace("Kocom Error - ID is Wrong!");
+		Log::Trace("Kocom Error - ID or PW is Wrong!");
 		break;
 	}
 	case KOCOM_ERROR_AUTH_FAIL_PASS:
@@ -202,14 +203,9 @@ void Client::KocomProcessResponseError(BYTE* pData)
 	}
 	}
 
-	CSISenderDlg* pDlg = (CSISenderDlg*)AfxGetMainWnd();
-	if (pDlg != NULL)
-	{
-		// 		pDlg->m_bKilled = true;
-		// 		pDlg->OnMenuExit();
-		pDlg->PostMessage(WM_CLOSE);
-	}
-
+	//모든 에러 메세지 리턴 받으면 프로그램 종료
+	Log::Trace("Kocom 서버로부터 Error Message를 수신해 프로그램을 종료합니다.");
+	AfxGetApp()->m_pMainWnd->PostMessageW(WM_QUIT);
 }
 
 void Client::KocomProcessResponseAlive(BYTE* pData)

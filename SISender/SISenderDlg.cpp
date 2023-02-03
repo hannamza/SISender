@@ -417,14 +417,9 @@ void CSISenderDlg::OnTimer(UINT_PTR nIDEvent)
 			DWORD dw = GetTickCount();
 			if (dw - CCommonState::Instance()->m_dwLastRecv > 60 * 1000)	// 주기가 50초이므로 가장 마지막 keep alive ack 시간과 10초 마진을 보고 그 이상이면 상태이상으로 판단
 			{
+				//Keep Alive Ack가 늦게 도착했거나 애초에 통신이 맺여지지 않을 경우이므로 프로그램 종료
 				Log::Trace("Kocom Keep Alive Ack Too Late!");
-				CSISenderDlg* pDlg = (CSISenderDlg*)AfxGetMainWnd();
-				if (pDlg != NULL)
-				{
-					// 		pDlg->m_bKilled = true;
-					// 		pDlg->OnMenuExit();
-					pDlg->PostMessage(WM_CLOSE);
-				}
+				AfxGetApp()->m_pMainWnd->PostMessageW(WM_QUIT);
 			}
 			else
 			{
