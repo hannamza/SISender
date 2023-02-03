@@ -214,7 +214,7 @@ BOOL CSISenderDlg::OnInitDialog()
 	bReadIni = ReadIniFile();
 	if (!bReadIni)
 	{
-		AfxMessageBox(_T("INI 파일 읽기에 실패했습니다! 프로그램을 종료합니다."));
+		Log::Trace("INI 파일 읽기에 실패했습니다. 프로그램을 종료합니다.");
 		AfxGetApp()->m_pMainWnd->PostMessageW(WM_QUIT);
 		return FALSE;
 	}
