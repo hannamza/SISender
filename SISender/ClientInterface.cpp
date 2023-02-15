@@ -233,8 +233,8 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 		strFireType = _T("화재 일괄 해제");
 		nFireType = KOCOM_FIRE_ALARM_ALL_CLEAR;
 	}
-	//else if((pData[SI_EVENT_BUF_COMMAND] == 'F') && (pData[SI_EVENT_BUF_FIRE_RECEIVER_1] == '0'))		//김호 마스터 확인 결과 두번째 조건을 필요 없음
-	else if (pData[SI_EVENT_BUF_COMMAND] == 'F')
+	else if((pData[SI_EVENT_BUF_COMMAND] == 'F') && (pData[SI_EVENT_BUF_FIRE_RECEIVER_1] == '0'))		//김호 마스터 확인 결과 두번째 조건을 필요 없음 -> 원복
+	//else if (pData[SI_EVENT_BUF_COMMAND] == 'F')
 	{
 		if (pData[SI_EVENT_BUF_OCCUR_INFO] == 'N')
 		{

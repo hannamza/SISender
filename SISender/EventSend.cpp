@@ -525,8 +525,8 @@ bool CEventSend::CheckClassify(BYTE* pData, CString & sUni, CString & sTitle, CS
 		}
 		else if ('F' == pData[2])
 		{
-			//김호 마스터에 확인 결과 잘못된 코드
-#if 0
+			//김호 마스터에 확인 결과 잘못된 코드 -> 원복
+#if 1
 			if (strType == "0")
 			{
 				strPosition = L"화재";
