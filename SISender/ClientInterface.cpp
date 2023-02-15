@@ -222,7 +222,7 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 	alarm.header.msgLength = sizeof(KOCOMProtocolFireAlarm) - sizeof(KOCOMProtocolHeader);
 	alarm.header.town = 0;
 	alarm.header.dong = 101;
-	alarm.header.ho = 101;
+	alarm.header.ho = 0;
 	alarm.header.reserved = 0;
 
 	//화재 타입 정의
@@ -233,7 +233,8 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 		strFireType = _T("화재 일괄 해제");
 		nFireType = KOCOM_FIRE_ALARM_ALL_CLEAR;
 	}
-	else if((pData[SI_EVENT_BUF_COMMAND] == 'F') && (pData[SI_EVENT_BUF_FIRE_RECEIVER_1] == '0'))
+	//else if((pData[SI_EVENT_BUF_COMMAND] == 'F') && (pData[SI_EVENT_BUF_FIRE_RECEIVER_1] == '0'))		//김호 마스터 확인 결과 두번째 조건을 필요 없음
+	else if (pData[SI_EVENT_BUF_COMMAND] == 'F')
 	{
 		if (pData[SI_EVENT_BUF_OCCUR_INFO] == 'N')
 		{
@@ -301,10 +302,18 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 			{
 				nFFloor = atoi(&cli.floor[2]);	// PH 이후 숫자
 			}
-			else
+			else if (nFloorType == FLOOR_TYPE_M)
+			{
+				nFFloor = atoi(&cli.floor[1]);	// M 이후 숫자 
+			}
+			else // 일반층은 그대로 층수 얻고, RF는 어차피 숫자가 없음, 현재 Kocom 프로토콜로 RF 표현 불가능
 			{
 				nFFloor = atoi(cli.floor);
 			}
+
+			//호(실) 정보
+			alarm.header.ho = nFHo = atoi(cli.room);
+
 		}
 	}
 	else //수신기 복구의 경우 빈 정보를 채움
@@ -325,18 +334,17 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 	CString strMsg = _T("");
 	CString strTemp = _T("");
 
+	strMsg = _T("#dong:");
 	strTemp.Format(_T("%s"), CCommonFunc::CharToWCHAR(cli.buildingName));
 	strMsg += strTemp;
-	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(cli.stair));
+	strMsg += _T(",#ho:");
+	strTemp.Format(_T("%s"), CCommonFunc::CharToWCHAR(cli.room));
 	strMsg += strTemp;
-	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(cli.floor));
-	strMsg += strTemp;
-	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(cli.room));
-	strMsg += strTemp;
-	strTemp.Format(_T(" %s"), CCommonFunc::CharToWCHAR(cli.circuitName));
+	strMsg += _T(",#floor:");
+	strTemp.Format(_T("%s"), CCommonFunc::CharToWCHAR(cli.floor));
 	strMsg += strTemp;
 
-	strcpy_s(alarm.szFMsg, CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
+	strcpy_s(alarm.szFMsg, CCommonFunc::WcharToUtf8(strMsg.GetBuffer(0)));	//한글포함 시 UTF-8 처리
 
 	CHAR cMsg[80];
 	memset(cMsg, NULL, 80);
@@ -346,28 +354,38 @@ void CClientInterface::KOCOMProcessRequestFireAlarm(BYTE* pData)
 	{
 	case FLOOR_TYPE_BASEMENT:
 	{
-		Log::Trace("%d동 B%d층 %s [%s]", nFDong, nFFloor * -1, cMsg, alarm.szFMsg);
+		Log::Trace("%d동 B%d층 %d호 %s [%s]", nFDong, nFFloor * -1, nFHo, cMsg, CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
 		break;
 	}
 	case FLOOR_TYPE_NORMAL:
 	{
-		Log::Trace("%d동 %d층 %s [%s]", nFDong, nFFloor, cMsg, alarm.szFMsg);
+		Log::Trace("%d동 %d층 %d호 %s [%s]", nFDong, nFFloor, nFHo, cMsg, CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
+		break;
+	}
+	case FLOOR_TYPE_RF:
+	{
+		Log::Trace("%d동 RF층 %s %s [%s]", nFDong, cli.room, cMsg, CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
 		break;
 	}
 	case FLOOR_TYPE_PH:
 	{
-		Log::Trace("%d동 PH%d층 %s [%s]", nFDong, nFFloor, cMsg, alarm.szFMsg);
+		Log::Trace("%d동 PH%d층 %s %s [%s]", nFDong,  nFFloor, cli.room, cMsg, CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
 		break;
 	}
 	case FLOOR_TYPE_PIT:
 	{
-		Log::Trace("%d동 PIT층 %s [%s]", nFDong, cMsg, alarm.szFMsg);
+		Log::Trace("%d동 PIT층 %s %s [%s]", nFDong, cli.room, cMsg, CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
+		break;
+	}
+	case FLOOR_TYPE_M:
+	{
+		Log::Trace("%d동 M%d층 %s호 %s [%s]", nFDong, nFFloor, cli.room, cMsg, CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
 		break;
 	}
 	case FLOOR_TYPE_ETC:
 	default:
 	{
-		Log::Trace("%d동 %s [%s]", nFDong, cMsg, alarm.szFMsg);
+		Log::Trace("%d동 %s [%s]", nFDong, cMsg, CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
 		break;
 	}
 	}

@@ -143,12 +143,19 @@ CString CCircuitLocInfo::GetCircuitNo(BYTE* pData)
 
 int CCircuitLocInfo::CheckFloorType(char* pFloor)
 {
-	char cFirstText, cSecondText;
+	char cFirstText, cSecondText, cThirdText;
 	cFirstText = pFloor[0];
 	cSecondText = pFloor[1];
+	cThirdText = pFloor[2];
 
 	if (cFirstText == 'B')
+	{
 		return FLOOR_TYPE_BASEMENT;
+	}
+	else if (cFirstText == 'R')
+	{
+		return FLOOR_TYPE_RF;
+	}
 	else if (cFirstText == 'P')
 	{
 		if (cSecondText == 'I')
@@ -156,6 +163,8 @@ int CCircuitLocInfo::CheckFloorType(char* pFloor)
 		else
 			return FLOOR_TYPE_PH;
 	}
+	else if (cFirstText == 'M')
+		return FLOOR_TYPE_M;
 	else if (cFirstText >= 0x31 && cFirstText <= 0x39)
 		return FLOOR_TYPE_NORMAL;
 

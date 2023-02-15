@@ -819,7 +819,7 @@ BOOL CSISenderDlg::ReadIniFile()
 	}
 	else
 	{
-		Log::Trace("Section : %s Key : IP 정보를 얻는 데에 실패했습니다.", strSection);
+		Log::Trace("Section : %s Key : IP 정보를 얻는 데에 실패했습니다.", CCommonFunc::WCharToChar(strSection.GetBuffer(0)));
 		return FALSE;
 	}
 
@@ -829,7 +829,7 @@ BOOL CSISenderDlg::ReadIniFile()
 	}
 	else
 	{
-		Log::Trace("Section : %s Key : PORT 정보를 얻는 데에 실패했습니다.", strSection);
+		Log::Trace("Section : %s Key : PORT 정보를 얻는 데에 실패했습니다.", CCommonFunc::WCharToChar(strSection.GetBuffer(0)));
 		return FALSE;
 	}
 
@@ -839,7 +839,7 @@ BOOL CSISenderDlg::ReadIniFile()
 	}
 	else
 	{
-		Log::Trace("Section : %s Key : ID 정보를 얻는 데에 실패했습니다.", strSection);
+		Log::Trace("Section : %s Key : ID 정보를 얻는 데에 실패했습니다.", CCommonFunc::WCharToChar(strSection.GetBuffer(0)));
 		return FALSE;
 	}
 
@@ -883,7 +883,7 @@ BOOL CSISenderDlg::ReadIniFile()
 			}
 			else
 			{
-				Log::Trace("SI_TEST - Section : INFO Key : LOGIN 정보를 얻는 데에 실패했습니다.", strSection);
+				Log::Trace("SI_TEST - Section : INFO Key : LOGIN 정보를 얻는 데에 실패했습니다.", CCommonFunc::WCharToChar(strSection.GetBuffer(0)));
 				return FALSE;
 			}
 
@@ -897,7 +897,7 @@ BOOL CSISenderDlg::ReadIniFile()
 			}
 			else
 			{
-				Log::Trace("Section : %s Key : PW 정보를 얻는 데에 실패했습니다.", strSection);
+				Log::Trace("Section : %s Key : PW 정보를 얻는 데에 실패했습니다.", CCommonFunc::WCharToChar(strSection.GetBuffer(0)));
 				return FALSE;
 			}
 			break;
@@ -910,7 +910,7 @@ BOOL CSISenderDlg::ReadIniFile()
 	}
 	else
 	{
-		Log::Trace("Section : %s, Key : TYPE 정보를 얻는 데에 실패했습니다.", strSection);
+		Log::Trace("Section : %s, Key : TYPE 정보를 얻는 데에 실패했습니다.", CCommonFunc::WCharToChar(strSection.GetBuffer(0)));
 		return FALSE;
 	}
 
