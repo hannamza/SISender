@@ -397,7 +397,13 @@ DWORD CSerialComm::ReadComm(BYTE *pBuff, DWORD nToRead)
 				//20230111 GBM start - 이벤트 공유메모리에 쓰도록 변경
 				//CEventSend::Instance()->SendEvent(pData);
 				CSM::WriteEventToSharedMemory(pData);
-				Log::Trace("Serial Event Occured! Shared Memory is Written!");
+				CString strBuf = _T("");
+				for (int i = 0; i < SI_EVENT_BUF_SIZE; i++)
+				{
+					strBuf += pData[i];
+				}
+				Log::Trace("Serial Event Occured! Shared Memory is Written!", CCommonFunc::WCharToChar(strBuf.GetBuffer(0)));
+				//Log::Trace("Serial Event Occured! Shared Memory is Written!");
 				//20230111 GBM end
 
 				//theApp.ProcessData(pData);

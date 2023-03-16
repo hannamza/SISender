@@ -87,6 +87,13 @@ public:
 		RequestManagerInfo,		// 관리자 로그인 및 관리자 정보
 		ResponseManagerInfo,
 
+		//
+		RequestPhoneToken,		// 40. 토큰/전화번호 암호화
+		ResponsePhoneToken,
+
+		RequestGetEventListEnc,	// 42. 이벤트 목록 요청 암호화
+		ResponseGetEventListEnc,
+
 		DefineEndProtocol
 	};
 };
@@ -189,6 +196,12 @@ public:
 	}
 	int nType;
 	int nCount;
+#ifdef GFS_SERVER_MODE
+	int nFire;
+	int nGas;
+	int nSpy;
+	int nLine;
+#endif
 	char szEventList[0]; // event1;event2;event3
 };
 //--------------------------------------------------------------------------------------
@@ -460,6 +473,37 @@ public:
 	int nWorkSiteSeq;
 	int nManagerSeq;
 	int nLimitUser;
+};
+
+//--------------------------------------------------------------------------------------
+
+// 토큰, 전화번호 전송
+// response - ResponseSetMasterKey(1: success, 0: fail)
+class ProtocolRequestEncrypt : public ProtocolHeader
+{
+public:
+	ProtocolRequestEncrypt()
+	{
+		memset(this, 0, sizeof(*this));
+		protocol = RequestSetToken;
+		size = sizeof(*this);
+	}
+	BYTE bVector[16];
+	BYTE bEncryptText[320];
+
+	/*CHAR szPhoneNo[16];
+	CHAR szToken[256];
+	int nMobileType;
+	int nFire;
+	int nGas;
+	int nSpy;
+	int nLine;
+	int nAlert;
+	int nHour;
+	int nMin;
+	int nEndHour;
+	int nEndMin;
+	int nUseTime;*/
 };
 
 #pragma pack(pop, 1)
