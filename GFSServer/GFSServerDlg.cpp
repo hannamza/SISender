@@ -135,6 +135,10 @@ BOOL CGFSServerDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+
+	//20230316 GBM start - github test
+	int a = 0;
+	//20230316 GBM end
 	
 	m_bStartServer = false;
 	m_checkScroll.SetCheck(true);
