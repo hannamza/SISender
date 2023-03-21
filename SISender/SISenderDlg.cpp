@@ -16,20 +16,37 @@ UINT ThreadSMCheck(LPVOID pParam)
 {
 	CSISenderDlg* pDlg = (CSISenderDlg*)pParam;
 
+	BYTE ringBuffer[(SI_EVENT_BUF_SIZE + 1) * 20000];
+	int nBufPos = 0;
+	BYTE* pData;
+
 	SYSTEMTIME st = CSM::ReadEventTimeFromSharedMemory();
 
 	while (pDlg->m_bSMCheck)
 	{
 		if (pDlg->CheckSMTimeChanged(st, CSM::ReadEventTimeFromSharedMemory()))
 		{
-			BYTE buf[SI_EVENT_BUF_SIZE];
-			CSM::ReadEventBufFromSharedMemory(buf, sizeof(buf));
-			CEventSend::Instance()->SendEvent(buf);
+			// 회로 최대 수용 개수가 1만개가 조금 넘으므로 최대 이만큼을 잡고 1000개 정도의 마진을 두어 인덱스가 여기까지 도달하면 초기화
+			if ((nBufPos + (SI_EVENT_BUF_SIZE + 1) * 1000) >= ((SI_EVENT_BUF_SIZE + 1) * 20000))
+			{
+				nBufPos = 0;
+			}
+
+			pData = &ringBuffer[nBufPos];
+			CSM::ReadEventBufFromSharedMemory(pData, SI_EVENT_BUF_SIZE);
+			nBufPos += SI_EVENT_BUF_SIZE + 1;
+			CEventSend::Instance()->SendEvent(pData);
+
+// 			BYTE buf[SI_EVENT_BUF_SIZE];
+// 			CSM::ReadEventBufFromSharedMemory(buf, sizeof(buf));
+// 			CEventSend::Instance()->SendEvent(buf);
 			st = CSM::ReadEventTimeFromSharedMemory();
 
 			//Log::Trace("이벤트 처리함!");
 		}
 	}
+
+	//SAFE_DELETE(pRingBuffer);
 
 	return 0;
 }

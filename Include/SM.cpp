@@ -84,7 +84,7 @@ void CSM::ReadEventBufFromSharedMemory(BYTE* pBuf, int nBufSize)
 	if (nBufSize != SI_EVENT_BUF_SIZE)
 		return;
 
-	memset(pBuf, 0, nBufSize);
+	memset(pBuf, 0, nBufSize + 1);
 	memcpy(pBuf, CSM::shm->es.event, nBufSize);
 }
 
