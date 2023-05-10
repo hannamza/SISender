@@ -44,6 +44,13 @@ void ClientMan::AddClients(int numClients)
 
 		if(client->Create(0))
 		{
+			//20230411 GBM start - COMMAX 기능 추가
+			if (CCommonState::Instance()->m_nSIType == COMMAX)
+			{
+				client->m_hCommaxConnect = CreateEvent(NULL, FALSE, FALSE, NULL);
+			}
+			//20230411 GBM end
+
 			m_listClient.push_back(client);
 		}
 		else
@@ -85,6 +92,13 @@ void ClientMan::RemoveClients()
 
 	for(int i = 0 ; i != static_cast<int>(m_listClient.size()) ; ++i)
 	{
+		//20230411 GBM start - COMMAX
+		if (CCommonState::Instance()->m_nSIType == COMMAX)
+		{
+			CloseHandle(m_listClient[i]->m_hCommaxConnect);
+		}
+		//20230411 GBM end
+
 		m_PoolClient.destroy(m_listClient[i]);
 	}
 	m_listClient.clear();

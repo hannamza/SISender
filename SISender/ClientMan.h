@@ -38,11 +38,15 @@ private:
 
 
 private:
-	typedef vector<Client*> ClientList;
-	ClientList m_listClient;
+// 	typedef vector<Client*> ClientList;
+// 	ClientList m_listClient;
 
 	typedef boost::object_pool<Client> PoolTypeClient;
 	PoolTypeClient m_PoolClient;
 
 	CRITICAL_SECTION m_CSForClients;
+
+public:
+	typedef vector<Client*> ClientList;
+	ClientList m_listClient;
 };

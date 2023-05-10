@@ -7,6 +7,8 @@
 #include "afxcmn.h"
 #include "afxwin.h"
 
+#include "CommaxSock.h"
+
 // CSISenderDlg 대화 상자
 class CSISenderDlg : public CDialogEx
 {
@@ -32,6 +34,8 @@ public:
 	bool m_bSMCheck;
 
 	ULONGLONG m_nAliveCount;
+
+	CCommaxSock* m_pCommaxSock;
 
 private:
 	void RegistryTrayIcon();
@@ -70,4 +74,6 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnLogMessage(WPARAM wParam, LPARAM lParam);	
 	afx_msg void OnClose();
+
+	afx_msg LRESULT OnCommaxEventProcess(WPARAM wParam, LPARAM lParam);
 };

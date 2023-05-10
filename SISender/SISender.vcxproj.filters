@@ -96,17 +96,23 @@
     <ClInclude Include="Log.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\KocomProtocol.h">
-      <Filter>Protocol</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\CommonDefines.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\CommonFunc.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="CircuitLocInfo.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="..\Protocol\KocomProtocol.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Protocol\CommaxProtocol.h">
+      <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="CommaxSock.h">
+      <Filter>소스 파일\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\CircuitLocInfo.h">
+      <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -167,8 +173,11 @@
     <ClCompile Include="..\Include\CommonFunc.cpp">
       <Filter>Include</Filter>
     </ClCompile>
-    <ClCompile Include="CircuitLocInfo.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="CommaxSock.cpp">
+      <Filter>소스 파일\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\CircuitLocInfo.cpp">
+      <Filter>Include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

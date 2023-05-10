@@ -1,9 +1,10 @@
 #pragma once
 
-//외부 업체 연계 ID, 0: 테스트(기존 GFSM Server), 1: Kocom
+//외부 업체 연계 ID, 0: 테스트(기존 GFSM Server), 1: Kocom, 2: Commax
 enum {
 	SI_TEST,
 	KOCOM,
+	COMMAX,
 	SI_TOTAL_COUNT
 };
 
@@ -116,6 +117,7 @@ static const TCHAR* g_lpszProcessName[] = {
 static const TCHAR* g_lpszSIName[] = {
 	_T("TEST"),
 	_T("KOCOM"),
+	_T("COMMAX"),
 	NULL
 };
 

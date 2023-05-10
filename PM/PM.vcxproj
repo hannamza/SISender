@@ -118,6 +118,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -171,6 +172,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -187,6 +189,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Include\CircuitLocInfo.h" />
     <ClInclude Include="..\Include\CommonDefines.h" />
     <ClInclude Include="..\Include\CommonFunc.h" />
     <ClInclude Include="..\Include\CriticalSectionEx.h" />
@@ -206,6 +209,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Include\CircuitLocInfo.cpp" />
     <ClCompile Include="..\Include\CommonFunc.cpp" />
     <ClCompile Include="..\Include\EncDec.cpp" />
     <ClCompile Include="..\Include\MiniDump.cpp" />

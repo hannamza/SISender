@@ -82,4 +82,9 @@ private:
 	BYTE m_recvBuffer[MAX_RECV_BUFFER];
 	BYTE m_sendBuffer[MAX_SEND_BUFFER];
 	struct addrinfo* m_infoList;
+
+	//20230411 GBM start - test
+public:
+	HANDLE m_hCommaxConnect;
+	//20230411 GBM end
 };

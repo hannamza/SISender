@@ -372,6 +372,12 @@ void CEventSend::ProcessEventQueue(queue<BYTE*> & queue, DWORD & dwValue, bool b
 			CClientInterface::Instance()->KOCOMProcessRequestFireAlarm(pData);
 			break;
 		}
+		case COMMAX:
+		{
+			//CClientInterface::Instance()->COMMAXProcessRequestFireAlarm(pData);
+			m_pWnd->PostMessage(WM_COMMAX_EVENT_PROCESS, (WPARAM)pData, NULL);
+			break;
+		}
 		default:
 			break;
 		}

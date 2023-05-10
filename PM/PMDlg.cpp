@@ -142,6 +142,22 @@ BOOL CPMDlg::OnInitDialog()
 
 	Log::Trace("INI 설정 로드 완료!");
 
+	//위치 정보 파일 존재 여부 확인
+	CCircuitLocInfo::New();
+	BOOL bCircuitPosInfoFIle = FALSE;
+	bCircuitPosInfoFIle = CCircuitLocInfo::Instance()->GetCircuitLocInfoFromCSVFile();
+	if (!bCircuitPosInfoFIle)
+	{
+		CStringArray strArr;
+		strArr.RemoveAll();
+
+		CCircuitLocInfo::Instance()->GetLocationTxtList(strArr);
+		if (strArr.GetSize() == 0)
+		{
+			Log::Trace("위치 정보 파일이 존재하지 않습니다.");
+		}
+	}
+
 	InitControl();
 
 	//QuitGracefullyAllExe();

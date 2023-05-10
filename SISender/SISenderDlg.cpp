@@ -99,6 +99,8 @@ CSISenderDlg::CSISenderDlg(CWnd* pParent /*=NULL*/)
 	m_bAutoLogin = false;
 
 	m_nAliveCount = 0;
+
+	m_pCommaxSock = nullptr;
 }
 
 void CSISenderDlg::DoDataExchange(CDataExchange* pDX)
@@ -125,6 +127,7 @@ BEGIN_MESSAGE_MAP(CSISenderDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_TEST, &CSISenderDlg::OnBnClickedButtonTest)
 	ON_WM_DESTROY()
 	ON_WM_CLOSE()
+	ON_MESSAGE(WM_COMMAX_EVENT_PROCESS, &CSISenderDlg::OnCommaxEventProcess)
 END_MESSAGE_MAP()
 
 
@@ -249,6 +252,11 @@ BOOL CSISenderDlg::OnInitDialog()
 		Log::Trace("이 프로그램은 [KOCOM]과 통신합니다.");
 		break;
 	}
+	case COMMAX:
+	{
+		Log::Trace("이 프로그램은 [COMMAX]와 통신합니다.");
+		break;
+	}
 	default:
 	{
 		break;
@@ -268,7 +276,8 @@ BOOL CSISenderDlg::OnInitDialog()
 
 		if (strArr.GetSize() == 0)
 		{
-			Log::Trace("회로 위치 정보 파일을 읽는 데에 실패했습니다. 프로그램을 종료합니다.");
+			//로그 쓰기 전에 프로그램 종료되어 PM쪽에 위치정보파일이 있는지 여부를 남김
+			//Log::Trace("회로 위치 정보 파일을 읽는 데에 실패했습니다. 프로그램을 종료합니다.");
 			AfxGetApp()->m_pMainWnd->PostMessageW(WM_QUIT);
 			return FALSE;
 		}
@@ -277,15 +286,21 @@ BOOL CSISenderDlg::OnInitDialog()
 
 		if (CCircuitLocInfo::Instance()->m_mapCircuitLocInfo.size() == 0)
 		{
-			Log::Trace("회로 위치 정보를 읽는 데에 실패했습니다. 프로그램을 종료합니다.");
+			//로그 쓰기 전에 프로그램 종료되어 PM쪽에 위치정보파일이 있는지 여부를 남김
+			//Log::Trace("회로 위치 정보를 읽는 데에 실패했습니다. 프로그램을 종료합니다.");
 			AfxGetApp()->m_pMainWnd->PostMessageW(WM_QUIT);
 			return FALSE;
 		}
 	}
 	
 	CClientInterface::New();
-	CClientInterface::Instance()->TryConnection(CCommonState::Instance()->m_szServerIP, CCommonState::Instance()->m_nPort);	// 20230111 GBM - INI에 기술된 외부업체 PORT로 들어가야 함
 
+	//Commax는 연결 지향이 아님
+	if (CCommonState::Instance()->m_nSIType != COMMAX)
+	{
+		CClientInterface::Instance()->TryConnection(CCommonState::Instance()->m_szServerIP, CCommonState::Instance()->m_nPort);	// 20230111 GBM - INI에 기술된 외부업체 PORT로 들어가야 함
+	}
+	
 	GetDlgItem(IDC_BUTTON_START)->EnableWindow(true);
 	GetDlgItem(IDC_BUTTON_STOP)->EnableWindow(false);
 
@@ -761,7 +776,8 @@ void CSISenderDlg::OnDestroy()
 
 	OnBnClickedButtonStop();
 
-	CClientInterface::Instance()->TryShutdown();
+
+	CClientInterface::Instance()->TryShutdown();	
 	CClientInterface::Instance()->Destroy();
 	CClientInterface::Delete();
 
@@ -991,4 +1007,194 @@ BOOL CSISenderDlg::CheckSMTimeChanged(SYSTEMTIME preTime, SYSTEMTIME curTime)
 		return TRUE;
 
 	return FALSE;
+}
+
+LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
+{
+	BYTE* pData = (BYTE*)wParam;
+
+	m_pCommaxSock = new CCommaxSock;
+	m_pCommaxSock->Create();
+	m_pCommaxSock->Connect(CCommonFunc::CharToTCHAR(CCommonState::Instance()->m_szServerIP), CCommonState::Instance()->m_nPort);
+
+	//
+	//버퍼 가공
+	//화재 타입 정의
+	CString strFireType = _T("");
+	int nFireType = 0;
+	if (pData[SI_EVENT_BUF_COMMAND] == 'R')
+	{
+		strFireType = _T("화재 일괄 해제");
+		nFireType = COMMAX_FIRE_ALARM_ALL_CLEAR;
+	}
+	//else if((pData[SI_EVENT_BUF_COMMAND] == 'F') && (pData[SI_EVENT_BUF_FIRE_RECEIVER_1] == '0'))		//김호 마스터 확인 결과 두번째 조건을 필요 없음
+	else if (pData[SI_EVENT_BUF_COMMAND] == 'F')
+	{
+		if (pData[SI_EVENT_BUF_OCCUR_INFO] == 'N')
+		{
+			strFireType = _T("화재 발생");
+			nFireType = COMMAX_FIRE_ALARM_FIRE_OCCURED;
+		}
+		else if (pData[SI_EVENT_BUF_OCCUR_INFO] == 'F')
+		{
+			strFireType = _T("화재 해제");
+			nFireType = COMMAX_FIRE_ALARM_FIRE_CLEAR;
+		}
+		else
+		{
+			Log::Trace("화재 타입이 아닌 이벤트가 들어왔습니다. COMMAX 이벤트 전송을 하지 않습니다.");
+			return 0;		// N이나 F가 아니면 리턴
+		}
+	}
+	else
+	{
+		Log::Trace("화재 타입이나 수신기 복구 이외의 이벤트가 들어왔습니다. COMMAX 이벤트 전송을 하지 않습니다.");
+		return -1;		//화재 타입이나 수신기 복구가 아니면 리턴
+	}
+
+	//건물 정보 - 회로 정보 매칭을 통해 위치 정보 확인
+	int nDong = 0;
+	int nFloor = 0;
+	int nStair = 0;
+	int nFloorType = FLOOR_TYPE_ETC;
+
+	//회로번호와 건물정보 매칭
+	CString strCircuitNo = _T("");
+	strCircuitNo = CCircuitLocInfo::Instance()->GetCircuitNo(pData);
+
+	std::map<CString, CIRCUIT_LOC_INFO>::iterator iter;
+	CIRCUIT_LOC_INFO cli;
+	//수신기 복구는 위치정보에 없음, 
+	if (strCircuitNo.Compare(_T("00000000")) != 0)
+	{
+		iter = CCircuitLocInfo::Instance()->m_mapCircuitLocInfo.find(strCircuitNo);
+
+		//위치정보에서 찾으면 
+		if (iter != CCircuitLocInfo::Instance()->m_mapCircuitLocInfo.end())
+		{
+			cli = iter->second;
+			if (nFireType != COMMAX_FIRE_ALARM_ALL_CLEAR)
+			{
+				nDong = atoi(cli.buildingName);
+			}
+
+			//일단 아파트 건물(101동, 102동 등의 건물이 아닌 주차장 등의 건물은 전송안함)
+			if (nDong == 0)
+			{
+				Log::Trace("아파트 건물 외의 기타 건물의 화재 정보가 들어왔습니다. COMMAX 이벤트 전송을 하지 않습니다.");
+				return -1;
+			}
+
+			nFloorType = CCircuitLocInfo::Instance()->CheckFloorType(cli.floor);
+
+			if (nFloorType == FLOOR_TYPE_BASEMENT)
+			{
+				nFloor = atoi(&cli.floor[1]);	// B 이후 숫자 
+				nFloor *= -1;
+			}
+			else if (nFloorType == FLOOR_TYPE_PH)	// COMMAX는 층이 큰 의미가 없고 옥탑층 개념이 없지만 일단 옥탑층 정보를 얻도록 함
+			{
+				nFloor = atoi(&cli.floor[2]);	// PH 이후 숫자
+			}
+			else if (nFloorType == FLOOR_TYPE_M)
+			{
+				nFloor = atoi(&cli.floor[1]);	// M 이후 숫자 
+			}
+			else // 일반층은 그대로 층수 얻고, RF는 어차피 숫자가 없음, 현재 COMMAX 프로토콜로 RF 표현 불가능
+			{
+				nFloor = atoi(cli.floor);
+			}
+
+			nStair = atoi(cli.stair);
+
+			//호(실) 정보는 COMMAX 프로토콜에 없음
+		}
+
+	}
+	else //수신기 복구
+	{
+
+	}
+
+	CString strBuf = _T("");
+
+	if (nFireType != COMMAX_FIRE_ALARM_ALL_CLEAR)
+	{
+		CString strDong = _T("");
+		if (nDong != 0)
+		{
+			strDong.Format(_T("%d"), nDong);
+		}
+
+		CString strFloor = _T("");
+		if (nFloor != 0)
+		{
+			strFloor.Format(_T("%d"), nFloor);
+		}
+
+		CString strStair = _T("");
+		if (nStair != 0)
+		{
+			strStair.Format(_T("%d"), nStair);
+		}
+
+		strBuf.Format(_T("%s\r\n\t%s\r\n\t\t%s%d%s\r\n\t\t%s%s%s\r\n\t\t%s%s%s\r\n\t\t%s%s%s\r\n\t\t%s%s%s\r\n\t%s\r\n%s")
+			, g_lpszCommaxTagName[XML_TAG_START_COMMAX]
+			, g_lpszCommaxTagName[XML_TAG_START_FIRE]
+			, g_lpszCommaxTagName[XML_TAG_START_EMERGENCY]
+			, nFireType
+			, g_lpszCommaxTagName[XML_TAG_END_EMERGENCY]
+			, g_lpszCommaxTagName[XML_TAG_START_DONG]
+			, strDong
+			, g_lpszCommaxTagName[XML_TAG_END_DONG]
+			, g_lpszCommaxTagName[XML_TAG_START_FLOOR]
+			, strFloor
+			, g_lpszCommaxTagName[XML_TAG_END_FLOOR]
+			, g_lpszCommaxTagName[XML_TAG_START_STAIR]
+			, strStair
+			, g_lpszCommaxTagName[XML_TAG_END_STAIR]
+			, g_lpszCommaxTagName[XML_TAG_START_LINE]
+			, _T("")
+			, g_lpszCommaxTagName[XML_TAG_END_LINE]
+			, g_lpszCommaxTagName[XML_TAG_END_FIRE]
+			, g_lpszCommaxTagName[XML_TAG_END_COMMAX]
+		);
+	}
+	else // COMMAX에서 수신기 복구를 화재해제(2), 동을 ALL로 보내달라고 요청함
+	{
+		strBuf.Format(_T("%s\r\n\t%s\r\n\t\t%s%d%s\r\n\t\t%s%s%s\r\n\t\t%s%s%s\r\n\t\t%s%s%s\r\n\t\t%s%s%s\r\n\t%s\r\n%s")
+			, g_lpszCommaxTagName[XML_TAG_START_COMMAX]
+			, g_lpszCommaxTagName[XML_TAG_START_FIRE]
+			, g_lpszCommaxTagName[XML_TAG_START_EMERGENCY]
+			, COMMAX_FIRE_ALARM_FIRE_CLEAR
+			, g_lpszCommaxTagName[XML_TAG_END_EMERGENCY]
+			, g_lpszCommaxTagName[XML_TAG_START_DONG]
+			, _T("ALL")
+			, g_lpszCommaxTagName[XML_TAG_END_DONG]
+			, g_lpszCommaxTagName[XML_TAG_START_FLOOR]
+			, _T("")
+			, g_lpszCommaxTagName[XML_TAG_END_FLOOR]
+			, g_lpszCommaxTagName[XML_TAG_START_STAIR]
+			, _T("")
+			, g_lpszCommaxTagName[XML_TAG_END_STAIR]
+			, g_lpszCommaxTagName[XML_TAG_START_LINE]
+			, _T("")
+			, g_lpszCommaxTagName[XML_TAG_END_LINE]
+			, g_lpszCommaxTagName[XML_TAG_END_FIRE]
+			, g_lpszCommaxTagName[XML_TAG_END_COMMAX]
+		);
+	}
+
+	char cBuf[300];
+	memset(cBuf, NULL, 300);
+	strcpy(cBuf, CCommonFunc::WCharToChar(strBuf.GetBuffer(0)));
+	
+	//Send 전에 utf-8 인코딩해야 함
+	m_pCommaxSock->Send((BYTE*)cBuf, strlen(cBuf));
+
+	m_pCommaxSock->Close();
+	delete m_pCommaxSock;
+	//
+
+	return 0;
 }

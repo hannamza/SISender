@@ -27,6 +27,7 @@
 #define		TIME_SLEEP(t, b) { DWORD cT=GetTickCount(); while(b && GetTickCount() - cT < t) Sleep(1); }
 
 #include <vector>
+#include <map>
 
 #include "CommonDefines.h"
 //#include "DeviceInfo.h"
@@ -39,6 +40,7 @@
 #include "ReadWriteState.h"
 #include "SM.h"
 #include "ProcWrapper.h"
+#include "CircuitLocInfo.h"
 
 #define STX       0x02
 #define ETX       0x03

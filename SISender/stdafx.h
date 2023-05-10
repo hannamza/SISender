@@ -22,7 +22,11 @@
 
 #include <afxdisp.h>        // MFC 자동화 클래스입니다.
 
+#include <afxsock.h>
+
 #define	 EVENT_TEST_MODE	
+
+#define WM_COMMAX_EVENT_PROCESS (WM_USER + 1005)
 
 #define		SAFE_DELETE(p) { if(p) { delete (p); (p)=NULL; } }
 #define		TIME_SLEEP(t, b) { DWORD cT=GetTickCount(); while(b && GetTickCount() - cT < t) Sleep(1); }
@@ -41,6 +45,7 @@
 #include "ClientInterface.h"
 #include "CommonProtocol.h"
 #include "KocomProtocol.h"
+#include "CommaxProtocol.h"
 #include "CommonState.h"
 #include "ReadWriteState.h"
 #include "SM.h"
@@ -62,7 +67,7 @@ extern HANDLE G_hShutdown_Event;
 
 #include <afxcontrolbars.h>     // MFC의 리본 및 컨트롤 막대 지원
 
-#include <afxsock.h>
+
 
 
 
