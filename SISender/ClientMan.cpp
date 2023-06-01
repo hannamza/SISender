@@ -92,14 +92,9 @@ void ClientMan::RemoveClients()
 
 	for(int i = 0 ; i != static_cast<int>(m_listClient.size()) ; ++i)
 	{
-		//20230411 GBM start - COMMAX
-		if (CCommonState::Instance()->m_nSIType == COMMAX)
-		{
-			CloseHandle(m_listClient[i]->m_hCommaxConnect);
-		}
-		//20230411 GBM end
-
 		m_PoolClient.destroy(m_listClient[i]);
+
+
 	}
 	m_listClient.clear();
 

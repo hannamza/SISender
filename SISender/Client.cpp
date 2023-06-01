@@ -426,12 +426,6 @@ void Client::OnConnect()
 		PostReceive();
 	}
 
-	//20230411 GBM start - COMMAX Ãß°¡
-	if (CCommonState::Instance()->m_nSIType == COMMAX)
-	{
-		ResetEvent(m_hCommaxConnect);
-	}
-	//20230411 GBM end
 }
 
 

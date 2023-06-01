@@ -157,6 +157,8 @@ BOOL CPMDlg::OnInitDialog()
 			Log::Trace("위치 정보 파일이 존재하지 않습니다.");
 		}
 	}
+	CCircuitLocInfo::Delete();
+	//
 
 	InitControl();
 
@@ -339,13 +341,16 @@ BOOL CPMDlg::InitProcessInfo()
 
 			if (!state.ReadState(strSection, L"ID", sTemp))
 			{
-				pPInfo->use = false;
-				break;
+				if (pPInfo->SIType != COMMAX)	// COMMAX는 PW가 없음
+				{
+					pPInfo->use = false;
+					break;
+				}
 			}
 
 			if (!state.ReadState(strSection, L"PW", sTemp))
 			{
-				if (pPInfo->SIType != SI_TEST)	// 기존 GFSM은 PW가 없음
+				if (pPInfo->SIType == KOCOM)	// 기존 GFSM, COMMAX는 PW가 없음
 				{
 					pPInfo->use = false;
 					break;
@@ -566,6 +571,10 @@ BOOL CPMDlg::ExcuteAllExe()
 			}
 
 			nUse++;
+
+			//SISender가 여러개 뜰 경우 위치정보파일에 접근할 때 충돌 상황 방지를 위해 1초 간격으로 프로세스 실행
+			Sleep(1000);
+			
 		}
 
 		nCnt++;

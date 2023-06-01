@@ -108,9 +108,6 @@
     <ClInclude Include="..\Protocol\CommaxProtocol.h">
       <Filter>Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="CommaxSock.h">
-      <Filter>소스 파일\Socket</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\CircuitLocInfo.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -172,9 +169,6 @@
     </ClCompile>
     <ClCompile Include="..\Include\CommonFunc.cpp">
       <Filter>Include</Filter>
-    </ClCompile>
-    <ClCompile Include="CommaxSock.cpp">
-      <Filter>소스 파일\Socket</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\CircuitLocInfo.cpp">
       <Filter>Include</Filter>

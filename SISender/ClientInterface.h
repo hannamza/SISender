@@ -4,8 +4,6 @@
 #include "ClientMan.h"
 #include <thread>
 
-#include "CommaxSock.h"
-
 using namespace std;
 
 class CClientInterface : public TSingleton<CClientInterface>
@@ -31,9 +29,6 @@ public:
 	void KOCOMProcessRequestBind(CHAR* szID, CHAR* szPW);
 	void KOCOMProcessRequestAlive();
 	void KOCOMProcessRequestFireAlarm(BYTE* pData);
-
-	//Commax
-	void COMMAXProcessRequestFireAlarm(BYTE* pData);
 
 private:
 	char m_ip[32];

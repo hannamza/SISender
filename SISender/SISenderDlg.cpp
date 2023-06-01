@@ -99,8 +99,6 @@ CSISenderDlg::CSISenderDlg(CWnd* pParent /*=NULL*/)
 	m_bAutoLogin = false;
 
 	m_nAliveCount = 0;
-
-	m_pCommaxSock = nullptr;
 }
 
 void CSISenderDlg::DoDataExchange(CDataExchange* pDX)
@@ -170,7 +168,7 @@ BOOL CSISenderDlg::OnInitDialog()
 #ifndef TEST_MODE_FLAG
 	CCommonState::Instance()->m_nProcessIndex = _ttoi(theApp.m_lpCmdLine);
 #else
-	CCommonState::Instance()->m_nProcessIndex = 2;
+	CCommonState::Instance()->m_nProcessIndex = 1;
 #endif
 
 	Log::Setup();
@@ -866,16 +864,6 @@ BOOL CSISenderDlg::ReadIniFile()
 		return FALSE;
 	}
 
-	if (state.ReadState(strSection, L"ID", sTemp))
-	{
-		strcpy_s(CCommonState::Instance()->m_szID, CCommonFunc::WCharToChar(sTemp.GetBuffer(0)));
-	}
-	else
-	{
-		Log::Trace("Section : %s Key : ID 정보를 얻는 데에 실패했습니다.", CCommonFunc::WCharToChar(strSection.GetBuffer(0)));
-		return FALSE;
-	}
-
 	//SI 업체 TYPE 별로 분기
 	if (state.ReadState(strSection, L"TYPE", nTemp))
 	{
@@ -885,6 +873,15 @@ BOOL CSISenderDlg::ReadIniFile()
 		{
 		case SI_TEST:
 		{
+			if (state.ReadState(strSection, L"ID", sTemp))
+			{
+				strcpy_s(CCommonState::Instance()->m_szID, CCommonFunc::WCharToChar(sTemp.GetBuffer(0)));
+			}
+			else
+			{
+				Log::Trace("Section : %s Key : ID 정보를 얻는 데에 실패했습니다.", CCommonFunc::WCharToChar(strSection.GetBuffer(0)));
+				return FALSE;
+			}
 
 			if (state.ReadState(strSection, L"PW", sTemp))	//SI_TEST는 PW가 비울 수 있음
 			{
@@ -924,6 +921,16 @@ BOOL CSISenderDlg::ReadIniFile()
 		}
 		case KOCOM:
 		{
+			if (state.ReadState(strSection, L"ID", sTemp))
+			{
+				strcpy_s(CCommonState::Instance()->m_szID, CCommonFunc::WCharToChar(sTemp.GetBuffer(0)));
+			}
+			else
+			{
+				Log::Trace("Section : %s Key : ID 정보를 얻는 데에 실패했습니다.", CCommonFunc::WCharToChar(strSection.GetBuffer(0)));
+				return FALSE;
+			}
+
 			if (state.ReadState(strSection, L"PW", sTemp))
 			{
 				strcpy_s(CCommonState::Instance()->m_szPass, CCommonFunc::WCharToChar(sTemp.GetBuffer(0)));
@@ -1012,10 +1019,6 @@ BOOL CSISenderDlg::CheckSMTimeChanged(SYSTEMTIME preTime, SYSTEMTIME curTime)
 LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 {
 	BYTE* pData = (BYTE*)wParam;
-
-	m_pCommaxSock = new CCommaxSock;
-	m_pCommaxSock->Create();
-	m_pCommaxSock->Connect(CCommonFunc::CharToTCHAR(CCommonState::Instance()->m_szServerIP), CCommonState::Instance()->m_nPort);
 
 	//
 	//버퍼 가공
@@ -1184,17 +1187,97 @@ LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 			, g_lpszCommaxTagName[XML_TAG_END_COMMAX]
 		);
 	}
-
-	char cBuf[300];
-	memset(cBuf, NULL, 300);
-	strcpy(cBuf, CCommonFunc::WCharToChar(strBuf.GetBuffer(0)));
-	
-	//Send 전에 utf-8 인코딩해야 함
-	m_pCommaxSock->Send((BYTE*)cBuf, strlen(cBuf));
-
-	m_pCommaxSock->Close();
-	delete m_pCommaxSock;
 	//
+	
+	sockaddr_in ServerAddr;
+	memset(&ServerAddr, 0, sizeof(ServerAddr));
+	//ServerAddr.sin_addr.S_un.S_addr = ADDR_ANY;
+	
+	ServerAddr.sin_family = AF_INET;
+	ServerAddr.sin_port = htons(CCommonState::Instance()->m_nPort);
+
+	inet_pton(AF_INET, CCommonState::Instance()->m_szServerIP, &(ServerAddr.sin_addr));
+
+	SOCKET commaxSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (commaxSock == INVALID_SOCKET)
+	{
+		Log::Trace("Commax Socket Creation Failed!");
+		return 0;
+	}
+
+	//Log::Trace("Commax Socket Creation Succeeded!");
+
+	if (connect(commaxSock, (sockaddr*)&ServerAddr, sizeof(sockaddr_in)) == SOCKET_ERROR)
+	{
+		DWORD dw;
+		dw = GetLastError();
+		Log::Trace("Commax Socket Connection Failed!");
+		Log::Trace("GetLastError : %d", dw);
+		return 0;
+	}
+
+	Log::Trace("Commax Socket Connection Succeeded!");
+
+	//
+
+
+	//send(commaxSock, (char*)pData, SI_EVENT_BUF_SIZE, 0);
+
+// 	char cBuf[300];
+// 	memset(cBuf, NULL, 300);
+// 	strcpy(cBuf, CCommonFunc::WCharToChar(strBuf.GetBuffer(0)));
+// 	int nSendLen = 0;
+// 	nSendLen = strBuf.GetLength();
+// 	send(commaxSock, cBuf, nSendLen, 0);
+
+	char strUtf8[900];
+	memset(strUtf8, NULL, 900);
+	strcpy_s(strUtf8, CCommonFunc::WcharToUtf8(strBuf.GetBuffer(0)));
+	if (send(commaxSock, strUtf8, strlen(strUtf8), 0) == SOCKET_ERROR)
+	{
+		DWORD dw;
+		dw = WSAGetLastError();
+		Log::Trace("Commax Sending Failed!");
+		Log::Trace("WSAGetLastError : %d", dw);
+		closesocket(commaxSock);
+		return 0;
+	}
+
+	Log::Trace("Commax Sending Succeeded!");
+
+	BOOL bRecv = FALSE;
+	ULONGLONG startTime;
+	startTime = GetTickCount64();
+	while (true)
+	{
+		BYTE buffer[265] = { 0, };
+		int nLength = 0;
+		nLength = recv(commaxSock, (char*)buffer, 265, 0);
+
+		if (nLength > 0)
+		{
+			bRecv = TRUE;
+			break;
+		}
+
+		ULONGLONG curTime;
+		curTime = GetTickCount64();
+		if (startTime + 3000 < curTime)	//3초 이내 Response 없으면 기다리지 않고 소켓 종료
+		{
+			break;
+		}
+	}
+
+	if (bRecv)
+	{
+		Log::Trace("Commax Response Received!");
+	}
+	else
+	{
+		Log::Trace("Commax Response Does not Received!");
+	}
+
+	closesocket(commaxSock);
 
 	return 0;
 }

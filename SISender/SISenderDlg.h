@@ -7,8 +7,6 @@
 #include "afxcmn.h"
 #include "afxwin.h"
 
-#include "CommaxSock.h"
-
 // CSISenderDlg 대화 상자
 class CSISenderDlg : public CDialogEx
 {
@@ -35,8 +33,6 @@ public:
 
 	ULONGLONG m_nAliveCount;
 
-	CCommaxSock* m_pCommaxSock;
-
 private:
 	void RegistryTrayIcon();
 
@@ -60,6 +56,7 @@ public:
 	BOOL ReadIniFile();
 	int GetKeepAlivePeriod();
 	BOOL CheckSMTimeChanged(SYSTEMTIME preTime, SYSTEMTIME curTime);	// 실제 시간으로 변환해서 같은지 확인하는 것보다 빠를 것으로 판단해서 이 매서드를 쓰기로 함
+
 
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButtonStart();

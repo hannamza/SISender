@@ -140,5 +140,5 @@ static const TCHAR* g_lpszSIName[] = {
 
 // Test Flag - 디버깅 시 사용하기 위한 플래그로 세팅되면 
 // Broker와 SISender가 SM processRun에 따라 종료하지 않고
-// SISender의 실행 시 인덱스를 PM으로부터 받지 않고 2로 고정
+// SISender의 실행 시 인덱스를 PM으로부터 받지 않고 1로 고정
 //#define TEST_MODE_FLAG
