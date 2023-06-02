@@ -1052,7 +1052,7 @@ LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 	else
 	{
 		Log::Trace("화재 타입이나 수신기 복구 이외의 이벤트가 들어왔습니다. COMMAX 이벤트 전송을 하지 않습니다.");
-		return -1;		//화재 타입이나 수신기 복구가 아니면 리턴
+		return 0;		//화재 타입이나 수신기 복구가 아니면 리턴
 	}
 
 	//건물 정보 - 회로 정보 매칭을 통해 위치 정보 확인
@@ -1085,7 +1085,7 @@ LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 			if (nDong == 0)
 			{
 				Log::Trace("아파트 건물 외의 기타 건물의 화재 정보가 들어왔습니다. COMMAX 이벤트 전송을 하지 않습니다.");
-				return -1;
+				return 0;
 			}
 
 			nFloorType = CCircuitLocInfo::Instance()->CheckFloorType(cli.floor);
@@ -1120,22 +1120,22 @@ LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 	}
 
 	CString strBuf = _T("");
+	CString strDong = _T("");
+	CString strFloor = _T("");
+	CString strStair = _T("");
 
 	if (nFireType != COMMAX_FIRE_ALARM_ALL_CLEAR)
 	{
-		CString strDong = _T("");
 		if (nDong != 0)
 		{
 			strDong.Format(_T("%d"), nDong);
 		}
 
-		CString strFloor = _T("");
 		if (nFloor != 0)
 		{
 			strFloor.Format(_T("%d"), nFloor);
 		}
 
-		CString strStair = _T("");
 		if (nStair != 0)
 		{
 			strStair.Format(_T("%d"), nStair);
@@ -1230,8 +1230,8 @@ LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 // 	nSendLen = strBuf.GetLength();
 // 	send(commaxSock, cBuf, nSendLen, 0);
 
-	char strUtf8[900];
-	memset(strUtf8, NULL, 900);
+	char strUtf8[300];
+	memset(strUtf8, NULL, 300);
 	strcpy_s(strUtf8, CCommonFunc::WcharToUtf8(strBuf.GetBuffer(0)));
 	if (send(commaxSock, strUtf8, strlen(strUtf8), 0) == SOCKET_ERROR)
 	{
@@ -1243,7 +1243,23 @@ LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 
-	Log::Trace("Commax Sending Succeeded!");
+	if (nFireType != COMMAX_FIRE_ALARM_ALL_CLEAR)
+	{
+		Log::Trace("Commax Sending Succeeded! - [# 화재타입 : %d, # %s 동, # %d 층, # %d 계단]", 
+			nFireType, 
+			CCommonFunc::WCharToChar(strDong.GetBuffer(0)), 
+			nFloor,
+			nStair
+		);
+	}
+	else
+	{
+		Log::Trace("Commax Sending Succeeded! - [# 화재타입 : %d, # ALL (동), # %d 층, # %d 계단]", 
+			COMMAX_FIRE_ALARM_FIRE_CLEAR, 
+			nFloor,
+			nStair
+		);
+	}
 
 	BOOL bRecv = FALSE;
 	ULONGLONG startTime;
@@ -1277,7 +1293,15 @@ LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 		Log::Trace("Commax Response Does not Received!");
 	}
 
-	closesocket(commaxSock);
+	if (closesocket(commaxSock) == SOCKET_ERROR)
+	{
+		DWORD dw;
+		dw = WSAGetLastError();
+		Log::Trace("Commax Socket Closing Failed!");
+		Log::Trace("WSAGetLastError : %d", dw);
+	}
+
+	//Log::Trace("Commax Socket Closed!");
 
 	return 0;
 }
