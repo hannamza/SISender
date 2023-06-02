@@ -1262,8 +1262,9 @@ LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 	}
 
 	BOOL bRecv = FALSE;
-	ULONGLONG startTime;
-	startTime = GetTickCount64();
+	LARGE_INTEGER startTime, curTime;
+	QueryPerformanceCounter(&startTime);
+
 	while (true)
 	{
 		BYTE buffer[265] = { 0, };
@@ -1276,9 +1277,9 @@ LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 			break;
 		}
 
-		ULONGLONG curTime;
-		curTime = GetTickCount64();
-		if (startTime + 3000 < curTime)	//3초 이내 Response 없으면 기다리지 않고 소켓 종료
+		QueryPerformanceCounter(&curTime);
+		double deltaTime = CCommonFunc::GetPreciseDeltaTime(startTime, curTime);
+		if (deltaTime > 3000)	//3초 이내 Response 없으면 기다리지 않고 소켓 종료
 		{
 			break;
 		}
