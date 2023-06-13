@@ -298,6 +298,10 @@ BOOL CSISenderDlg::OnInitDialog()
 	{
 		CClientInterface::Instance()->TryConnection(CCommonState::Instance()->m_szServerIP, CCommonState::Instance()->m_nPort);	// 20230111 GBM - INI에 기술된 외부업체 PORT로 들어가야 함
 	}
+	else
+	{
+		CCommaxFunc::New();
+	}
 	
 	GetDlgItem(IDC_BUTTON_START)->EnableWindow(true);
 	GetDlgItem(IDC_BUTTON_STOP)->EnableWindow(false);
@@ -779,6 +783,11 @@ void CSISenderDlg::OnDestroy()
 	CClientInterface::Instance()->Destroy();
 	CClientInterface::Delete();
 
+	if (CCommonState::Instance()->m_nSIType == COMMAX)
+	{
+		CCommaxFunc::Delete();
+	}
+
 	CCommonState::Delete();
 
 	CCircuitLocInfo::Delete();
@@ -1016,8 +1025,24 @@ BOOL CSISenderDlg::CheckSMTimeChanged(SYSTEMTIME preTime, SYSTEMTIME curTime)
 	return FALSE;
 }
 
+//
+// int MakeSocketNonBlocking(int sock)
+// {
+// 	unsigned long arg = 1;
+// 	return ioctlsocket(sock, FIONBIO, &arg) == 0;
+// }
+//
+
 LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 {
+	// 1: Commax Connect만 비동기처리, 0: Commax 동기 소켓
+#if 1
+	BYTE* pData = (BYTE*)wParam;
+
+	CCommaxFunc::Instance()->CommaxEventProcess(pData);
+
+	return 0;
+#else
 	BYTE* pData = (BYTE*)wParam;
 
 	//
@@ -1243,23 +1268,56 @@ LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 
+	CString strFloorPrefix = _T("");
+	CString strMsg = _T("");
+
+	switch (nFloorType)
+	{
+	case FLOOR_TYPE_BASEMENT:
+	{
+		nFloor *= -1;
+		strFloorPrefix = _T("B");
+		break;
+	}
+	case FLOOR_TYPE_RF:
+	{
+		strFloorPrefix = _T("R");
+		break;
+	}
+	case FLOOR_TYPE_PH:
+	{
+		strFloorPrefix = _T("PH");
+		break;
+	}
+	case FLOOR_TYPE_PIT:
+	{
+		strFloorPrefix = _T("PIT");
+		break;
+	}
+	case FLOOR_TYPE_M:
+	{
+		strFloorPrefix = _T("M");
+		break;
+	}
+	default:
+		break;
+	}
+
 	if (nFireType != COMMAX_FIRE_ALARM_ALL_CLEAR)
 	{
-		Log::Trace("Commax Sending Succeeded! - [# 화재타입 : %d, # %s 동, # %d 층, # %d 계단]", 
-			nFireType, 
-			CCommonFunc::WCharToChar(strDong.GetBuffer(0)), 
+		strMsg.Format(_T("Commax Sending Succeeded! - [# 이벤트 타입 : %s, # %s 동, # %s%d F, # %d 계단]"), 
+			strFireType,
+			strDong,
+			strFloorPrefix,
 			nFloor,
-			nStair
-		);
+			nStair);		
 	}
 	else
 	{
-		Log::Trace("Commax Sending Succeeded! - [# 화재타입 : %d, # ALL (동), # %d 층, # %d 계단]", 
-			COMMAX_FIRE_ALARM_FIRE_CLEAR, 
-			nFloor,
-			nStair
-		);
+		strMsg.Format(_T("Commax Sending Succeeded! - [# 이벤트 타입 : %s, # ALL (동)]"), strFireType);
 	}
+
+	Log::Trace("%s", CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
 
 	BOOL bRecv = FALSE;
 	LARGE_INTEGER startTime, curTime;
@@ -1305,4 +1363,5 @@ LRESULT CSISenderDlg::OnCommaxEventProcess(WPARAM wParam, LPARAM lParam)
 	//Log::Trace("Commax Socket Closed!");
 
 	return 0;
+#endif
 }

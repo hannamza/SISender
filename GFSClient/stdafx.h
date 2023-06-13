@@ -24,14 +24,11 @@
 
 #include <afxsock.h>
 
-#define	 EVENT_TEST_MODE	
-
-#define WM_COMMAX_EVENT_PROCESS (WM_USER + 1005)
-
 #define		SAFE_DELETE(p) { if(p) { delete (p); (p)=NULL; } }
 #define		TIME_SLEEP(t, b) { DWORD cT=GetTickCount(); while(b && GetTickCount() - cT < t) Sleep(1); }
 
-//#define		WM_TRAY_NOTIFICATION		(WM_USER+1003)
+#define TIMER_GFS_SERVER_KEEP_ALIVE_ID	100
+#define	TIMER_GFS_SERVER_KEEP_ALIVE_PERIOD	5000
 
 #include <map>
 
@@ -46,18 +43,12 @@
 #include "CommonProtocol.h"
 #include "KocomProtocol.h"
 #include "CommaxProtocol.h"
+#include "GFSProtocol.h"
 #include "CommonState.h"
 #include "ReadWriteState.h"
 #include "SM.h"
 #include "intrin.h"
 #include "CircuitLocInfo.h"
-#include "CommaxFunc.h"
-
-#define STX       0x02
-#define ETX       0x03
-#define NEW_INPUT 0x0A
-
-extern HANDLE G_hShutdown_Event;
 
 #ifndef _AFX_NO_OLE_SUPPORT
 #include <afxdtctl.h>           // Internet Explorer 4 공용 컨트롤에 대한 MFC 지원입니다.
@@ -67,9 +58,6 @@ extern HANDLE G_hShutdown_Event;
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 #include <afxcontrolbars.h>     // MFC의 리본 및 컨트롤 막대 지원
-
-
-
 
 
 

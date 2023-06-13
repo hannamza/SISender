@@ -92,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>$(BOOST_FOLDER);$(BOOST_LIBS_FOLDER);Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_FOLDER);$(BOOST_LIBS_FOLDER);../Include;../Protocol</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,7 +140,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>$(BOOST_FOLDER);$(BOOST_LIBS_FOLDER);Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_FOLDER);$(BOOST_LIBS_FOLDER);../Include;../Protocol</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -206,6 +206,7 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientInterface.h" />
     <ClInclude Include="ClientMan.h" />
+    <ClInclude Include="CommaxFunc.h" />
     <ClInclude Include="CommonState.h" />
     <ClInclude Include="DeviceInfo.h" />
     <ClInclude Include="EventSend.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="ClientInterface.cpp" />
     <ClCompile Include="ClientMan.cpp" />
     <ClCompile Include="Client_Process.cpp" />
+    <ClCompile Include="CommaxFunc.cpp" />
     <ClCompile Include="CommonState.cpp" />
     <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="EventSend.cpp" />

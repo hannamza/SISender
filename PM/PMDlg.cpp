@@ -263,11 +263,11 @@ void CPMDlg::ShowProgramVersion()
 
 		strProtocol += strTemp;
 		if (nSI != SI_TOTAL_COUNT - 1)
-			strProtocol += _T(" ");
+			strProtocol += _T(", ");
 
 	}
 
-	strVersionInfo.Format(_T("Program Ver : [%s] 현재 지원 Protocol : [%s]"), strProgramVersion, strProtocol);
+	strVersionInfo.Format(_T("Program Ver : [%s] Protocols : [%s]"), strProgramVersion, strProtocol);
 	CStatic* pStatic = (CStatic*)GetDlgItem(IDC_STATIC_PROGRAM_VERSION);
 	pStatic->SetWindowTextW(strVersionInfo);
 }
@@ -589,6 +589,7 @@ void CPMDlg::OnTimer(UINT_PTR nIDEvent)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	if (nIDEvent == TIMER_PROCESS_CHECK_ID)
 	{
+		BOOL bKillTimer = FALSE;
 		std::vector<PROCESS_INFO*>::iterator iter;
 		iter = m_vecProcessInfo.begin();
 
@@ -630,6 +631,13 @@ void CPMDlg::OnTimer(UINT_PTR nIDEvent)
 
 			if (!bAlive)
 			{
+				if (!bKillTimer)
+				{
+					bKillTimer = TRUE;
+				}
+
+				KillTimer(TIMER_PROCESS_CHECK_ID);
+
 				// 죽이고
 				if ((*iter)->processId != 0)
 				{
@@ -661,6 +669,9 @@ void CPMDlg::OnTimer(UINT_PTR nIDEvent)
 				CSM::WriteProcessRunToSharedMemory(nCnt, bAlive);
 
 				m_nPreAliveCount[nCnt] = 0;
+
+				// 너무 빨리 실행되어 여러 개가 실행되는 현상 막기 위함
+				Sleep(500);
 
 				// 다시 살림
 				int ret = 0;
@@ -705,6 +716,13 @@ void CPMDlg::OnTimer(UINT_PTR nIDEvent)
 
 			nCnt++;
 			nListRow++;
+		}
+
+		// 관리 프로세스들 중 하나라도 재실행되면 중간에 sleep때문에 타이머가 밀리므로 일단 타이머를 끄고 다시 세팅
+		if (bKillTimer)
+		{
+			SetTimer(TIMER_PROCESS_CHECK_ID, TIMER_PROCESS_CHECK_PERIOD, NULL);
+			Log::Trace("재시작 프로세스가 발생해 프로세스 체크 타이머를 다시 실행합니다.");
 		}
 	}
 

@@ -91,7 +91,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
+      <AdditionalIncludeDirectories>$(BOOST_FOLDER);$(BOOST_LIBS_FOLDER);../Include;../Protocol</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -138,7 +139,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
+      <AdditionalIncludeDirectories>$(BOOST_FOLDER);$(BOOST_LIBS_FOLDER);../Include;../Protocol</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -198,11 +200,11 @@
     <ClInclude Include="..\Include\SM.h" />
     <ClInclude Include="..\Include\TSingleton.h" />
     <ClInclude Include="..\Protocol\CommonProtocol.h" />
+    <ClInclude Include="..\Protocol\GFSProtocol.h" />
     <ClInclude Include="CircuitLocInfo.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="EventSend.h" />
-    <ClInclude Include="GFSProtocol.h" />
     <ClInclude Include="GFSServer.h" />
     <ClInclude Include="GFSServerDlg.h" />
     <ClInclude Include="IOEvent.h" />

@@ -230,16 +230,14 @@ void CEventSend::SendThreadLoop()
 		m_sendQueue.pop();
 		m_sync.Leave();
 
-		//ex: 00000001,06,00,0번수신기 0유닛  0계통 AN-정온식 001 
-
 		strFACPNum.Format(L"%c%c", pData[3], pData[4]);
 		strUnitNum.Format(L"%c%c", pData[5], pData[6]);
 		strLoopNum.Format(L"%c", pData[8]);
 		strLineNum.Format(L"%c%c%c", pData[9], pData[10], pData[11]);
 
-		strAddress.Format(L"%02s%02s%s%03s", strFACPNum, strUnitNum, strLoopNum, strLineNum);	//ex: 00000001
-		strType = CDeviceInfo::Instance()->GetDeviceName(strAddress).Left(1);	//ex: 06에서 0
-		sName = CDeviceInfo::Instance()->GetDeviceName(strAddress).Mid(3);		//ex: 0번수신기 0유닛  0계통 AN-정온식 001
+		strAddress.Format(L"%02s%02s%s%03s", strFACPNum, strUnitNum, strLoopNum, strLineNum);
+		strType = CDeviceInfo::Instance()->GetDeviceName(strAddress).Left(1);
+		sName = CDeviceInfo::Instance()->GetDeviceName(strAddress).Mid(3);
 
 		currTime = CTime::GetCurrentTime();
 
@@ -377,7 +375,7 @@ void CEventSend::ProcessEventQueue(queue<BYTE*> & queue, DWORD & dwValue, bool b
 		case COMMAX:
 		{
 			//CClientInterface::Instance()->COMMAXProcessRequestFireAlarm(pData);
-			m_pWnd->PostMessage(WM_COMMAX_EVENT_PROCESS, (WPARAM)pData, NULL);
+			//m_pWnd->PostMessage(WM_COMMAX_EVENT_PROCESS, (WPARAM)pData, NULL);
 			break;
 		}
 		default:
@@ -435,6 +433,7 @@ void CEventSend::ProcessEventQueue(queue<BYTE*> & queue, DWORD & dwValue, bool b
 
 void CEventSend::CheckAndSend()
 {
+	BYTE* pData = NULL;
 	// 단선
 	int nSize = m_lineQueue.size();
 	if ((m_dwLine > 0 && nSize > 0 && GetTickCount() - m_dwLine >= 3000) || nSize >= 1001) {

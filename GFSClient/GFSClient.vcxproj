@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D760110F-0C64-462B-B5A8-D1153798C72A}</ProjectGuid>
-    <RootNamespace>PM</RootNamespace>
+    <ProjectGuid>{5ADD5C53-C353-4F6D-ADE2-3D6E978551B3}</ProjectGuid>
+    <RootNamespace>GFSClient</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -119,7 +119,6 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -174,7 +173,6 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -202,10 +200,18 @@
     <ClInclude Include="..\Include\ReadWriteState.h" />
     <ClInclude Include="..\Include\SM.h" />
     <ClInclude Include="..\Include\TSingleton.h" />
+    <ClInclude Include="..\Protocol\CommonProtocol.h" />
+    <ClInclude Include="..\Protocol\GFSProtocol.h" />
+    <ClInclude Include="Client.h" />
+    <ClInclude Include="ClientInterface.h" />
+    <ClInclude Include="ClientMan.h" />
+    <ClInclude Include="CommonState.h" />
+    <ClInclude Include="DeviceInfo.h" />
+    <ClInclude Include="EventSend.h" />
+    <ClInclude Include="GFSClient.h" />
+    <ClInclude Include="GFSClientDlg.h" />
     <ClInclude Include="Log.h" />
-    <ClInclude Include="PM.h" />
-    <ClInclude Include="PMDlg.h" />
-    <ClInclude Include="ProcWrapper.h" />
+    <ClInclude Include="Network.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -218,10 +224,17 @@
     <ClCompile Include="..\Include\MinidumpHelp.cpp" />
     <ClCompile Include="..\Include\ReadWriteState.cpp" />
     <ClCompile Include="..\Include\SM.cpp" />
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="ClientInterface.cpp" />
+    <ClCompile Include="ClientMan.cpp" />
+    <ClCompile Include="Client_Process.cpp" />
+    <ClCompile Include="CommonState.cpp" />
+    <ClCompile Include="DeviceInfo.cpp" />
+    <ClCompile Include="EventSend.cpp" />
+    <ClCompile Include="GFSClient.cpp" />
+    <ClCompile Include="GFSClientDlg.cpp" />
     <ClCompile Include="Log.cpp" />
-    <ClCompile Include="PM.cpp" />
-    <ClCompile Include="PMDlg.cpp" />
-    <ClCompile Include="ProcWrapper.cpp" />
+    <ClCompile Include="Network.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -230,20 +243,20 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="PM.rc" />
+    <ResourceCompile Include="GFSClient.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\PM.rc2" />
+    <None Include="res\GFSClient.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\PM.ico" />
+    <Image Include="res\GFSClient.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="PM.rc" />
+      <UserProperties RESOURCE_FILE="GFSClient.rc" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

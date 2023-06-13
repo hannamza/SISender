@@ -96,14 +96,14 @@
     <ClInclude Include="..\Protocol\CommonProtocol.h">
       <Filter>Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="GFSProtocol.h">
-      <Filter>Protocol</Filter>
-    </ClInclude>
     <ClInclude Include="CircuitLocInfo.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="EventSend.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Protocol\GFSProtocol.h">
+      <Filter>Protocol</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

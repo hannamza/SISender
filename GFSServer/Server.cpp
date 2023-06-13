@@ -676,13 +676,10 @@ void Server::Send(Packet* packet, BYTE* pData, int nSize, int nCommand)
 	}
 	else
 	{
-		// 에러 응답이거나 로그인 상태일때만 전송
-		if ((nCommand == GFSProtocolHeader::GFSProtocolCommand::ERROR_RESPONSE) || ((*itor)->GetSocket() == Client::LOGGED_IN))
-		{
-			Packet* pPacket = Packet::Create(packet->GetSender(), pData, nSize);
-			if (pPacket) {
-				PostSend(pPacket->GetSender(), pPacket);
-			}
+
+		Packet* pPacket = Packet::Create(packet->GetSender(), pData, nSize);
+		if (pPacket) {
+			PostSend(pPacket->GetSender(), pPacket);
 		}
 		
 		Packet::Destroy(packet);

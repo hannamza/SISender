@@ -27,7 +27,19 @@ enum {
 	XML_TAG_END_RESPONSE
 } COMMAX_XML_TAG_ENUM;
 
-//프로세스 명
+enum {
+	OK,
+	NOT_SUPPORTED,
+	OUT_OF_RANGE,
+	TEMPORARY_UNAVAILABLE,
+	PARAMETER_MISMATCH,
+	NO_RESPONSE,
+	INTERNAL_ERROR,
+	NOT_SPECIFIED,
+	DUPLICATE_ENTRY
+} COMMAX_RESULT_ENUM;
+
+//태그 명
 static const TCHAR* g_lpszCommaxTagName[] = {
 	_T("<cmx>"),
 	_T("</cmx>"),

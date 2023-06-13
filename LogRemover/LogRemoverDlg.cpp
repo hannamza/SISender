@@ -474,11 +474,6 @@ void CLogRemoverDlg::GetLogFolderList()
 			continue;
 		}
 
-		if (!state.ReadState(strSection, L"ID", sTemp))
-		{
-			continue;
-		}
-
 		//SI 업체 TYPE 별로 분기
 		if (state.ReadState(strSection, L"TYPE", nTemp))
 		{
@@ -495,6 +490,10 @@ void CLogRemoverDlg::GetLogFolderList()
 			}
 			case KOCOM:
 			{
+				if (!state.ReadState(strSection, L"ID", sTemp))
+				{
+					continue;
+				}
 				if (!state.ReadState(strSection, L"PW", sTemp))
 				{
 					continue;;
@@ -504,7 +503,8 @@ void CLogRemoverDlg::GetLogFolderList()
 			}
 			default:
 			{
-				continue;
+				//continue;
+				break;
 			}
 			}
 		}

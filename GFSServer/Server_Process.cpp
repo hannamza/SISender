@@ -1514,17 +1514,19 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 		iter = CCircuitLocInfo::Instance()->m_mapCircuitLocInfo.find(strCircuitNo);
 		if (iter != CCircuitLocInfo::Instance()->m_mapCircuitLocInfo.end())
 		{
-			strcpy(gpue.building, CCommonFunc::WcharToUtf8(CCommonFunc::CharToWCHAR(iter->second.buildingName)));
-			strcpy(gpue.stair, CCommonFunc::WcharToUtf8(CCommonFunc::CharToWCHAR(iter->second.stair)));
-			strcpy(gpue.floor, CCommonFunc::WcharToUtf8(CCommonFunc::CharToWCHAR(iter->second.floor)));
-			strcpy(gpue.room, CCommonFunc::WcharToUtf8(CCommonFunc::CharToWCHAR(iter->second.room)));
-			strcpy(gpue.circuit, CCommonFunc::WcharToUtf8(CCommonFunc::CharToWCHAR(iter->second.circuitName)));
+			strcpy_s(gpue.building, CCommonFunc::WcharToUtf8(CCommonFunc::CharToWCHAR(iter->second.buildingName)));
+			strcpy_s(gpue.stair, CCommonFunc::WcharToUtf8(CCommonFunc::CharToWCHAR(iter->second.stair)));
+			strcpy_s(gpue.floor, CCommonFunc::WcharToUtf8(CCommonFunc::CharToWCHAR(iter->second.floor)));
+			strcpy_s(gpue.room, CCommonFunc::WcharToUtf8(CCommonFunc::CharToWCHAR(iter->second.room)));
+			strcpy_s(gpue.circuit, CCommonFunc::WcharToUtf8(CCommonFunc::CharToWCHAR(iter->second.circuitName)));
 
 // 			strcpy(gpue.building, iter->second.buildingName);
 // 			strcpy(gpue.stair, iter->second.stair);
 // 			strcpy(gpue.floor, iter->second.floor);
 // 			strcpy(gpue.room, iter->second.room);
 // 			strcpy(gpue.circuit, iter->second.circuitName);
+
+			gpue.reserved = 0;
 
 			Server::Instance()->SendAll((BYTE*)&gpue, sizeof(GFSProtocolUnsolicitedEvent));
 		}
@@ -1536,10 +1538,15 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 	}
 	else  //수신기가 복구되면 각 이벤트 타입 별로 일괄해제를 보낸다. -> 김호 마스터
 	{
+		//회로 위치 정보가 없으므로 헤더와 eventType, occurrence, reserved를 제외한 나머지 정보를 0으로 초기화 
+		memset(gpue.building, 0, sizeof(GFSProtocolUnsolicitedEvent) - (sizeof(GFSProtocolHeader) + sizeof(int) /* eventType */ + sizeof(int) /* occurrence */  + sizeof(double) /* reserved */));
+
 		for (int i = GFSProtocolHeader::GFSProtocolEventType::FIRE_INFO; i <= GFSProtocolHeader::GFSProtocolEventType::RESTORATION_INFO; i++)
 		{
 			gpue.eventType = i;
 			Server::Instance()->SendAll((BYTE*)&gpue, sizeof(GFSProtocolUnsolicitedEvent));
+			
+			Sleep(100);	//sleep을 주지 않으면 패킷이 뭉쳐서 가능 경우가 발생해 받는 쪽에서 쪼개서 파싱해야 해서 잠시 sleep을 줌, 이쪽에서 구현하는 거 아니니까 크게 상관없긴 함
 		}
 	}
 }
