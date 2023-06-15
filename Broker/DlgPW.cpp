@@ -63,3 +63,16 @@ BOOL CDlgPW::PreTranslateMessage(MSG* pMsg)
 
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
+
+
+BOOL CDlgPW::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	// TODO:  여기에 추가 초기화 작업을 추가합니다.
+	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT_PW);
+	pEdit->SetFocus();
+
+	return FALSE;  // return TRUE unless you set the focus to a control
+				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
+}

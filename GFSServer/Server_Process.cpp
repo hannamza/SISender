@@ -1444,6 +1444,10 @@ void Server::ProcessGFSProtocolRequestKeepAlive(BYTE* pData, Packet* packet)
 
 void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 {
+	CString strEventType = _T("");
+	CString strOccurence = _T("");
+	CString strMsg = _T("");
+
 	GFSProtocolUnsolicitedEvent gpue;
 
 	switch (pData[SI_EVENT_BUF_COMMAND])
@@ -1451,26 +1455,31 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 	case 'F':
 	{
 		gpue.eventType = GFSProtocolHeader::GFSProtocolEventType::FIRE_INFO;
+		strEventType = _T("화재");
 		break;
 	}
 	case 'G':
 	{
 		gpue.eventType = GFSProtocolHeader::GFSProtocolEventType::GAS_INFO;
+		strEventType = _T("가스");
 		break;
 	}
 	case 'S':
 	{
 		gpue.eventType = GFSProtocolHeader::GFSProtocolEventType::SURVEILLANCE_INFO;
+		strEventType = _T("감시");
 		break;
 	}
 	case 'T':
 	{
 		gpue.eventType = GFSProtocolHeader::GFSProtocolEventType::DISCONNECTION_INFO;
+		strEventType = _T("단선");
 		break;
 	}
 	case 'R':
 	{
 		gpue.eventType = GFSProtocolHeader::GFSProtocolEventType::RESTORATION_INFO;
+		strEventType = _T("시스템 복구 신호");
 		break;
 	}
 	default:
@@ -1485,15 +1494,22 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 	case 'N':
 	{
 		//발생이지만 이벤트 타입이 수신기 복구이면 일괄 해제로 넣음
-		if(gpue.eventType != GFSProtocolHeader::GFSProtocolEventType::RESTORATION_INFO)
+		if (gpue.eventType != GFSProtocolHeader::GFSProtocolEventType::RESTORATION_INFO)
+		{
 			gpue.occurrence = GFSProtocolHeader::GFSProtocolOccurrence::OCCURRENCE;
+			strOccurence = _T("발생");
+		}
 		else
+		{
 			gpue.occurrence = GFSProtocolHeader::GFSProtocolOccurrence::RESTORATION_ALL;
+			strOccurence = _T("복구");
+		}
 		break;
 	}
 	case 'F':
 	{
 		gpue.occurrence = GFSProtocolHeader::GFSProtocolOccurrence::RESTORATION;
+		strOccurence = _T("일괄 복구");
 		break;
 	}
 	default:
@@ -1529,6 +1545,16 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 			gpue.reserved = 0;
 
 			Server::Instance()->SendAll((BYTE*)&gpue, sizeof(GFSProtocolUnsolicitedEvent));
+			strMsg.Format(_T("이벤트 발생 ! - 건물 : [%s], 계단 : [%s], 층 : [%s], 실 : [%s], 설비 : [%s], EVENT TYPE : [%s], 발생 정보 : [%s]"),
+				CCommonFunc::CharToWCHAR(iter->second.buildingName), 
+				CCommonFunc::CharToWCHAR(iter->second.stair),
+				CCommonFunc::CharToWCHAR(iter->second.floor),
+				CCommonFunc::CharToWCHAR(iter->second.room),
+				CCommonFunc::CharToWCHAR(iter->second.circuitName),
+				strEventType,
+				strOccurence
+				);
+			Log::Trace("%s", CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
 		}
 		else
 		{
@@ -1544,7 +1570,43 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 		for (int i = GFSProtocolHeader::GFSProtocolEventType::FIRE_INFO; i <= GFSProtocolHeader::GFSProtocolEventType::RESTORATION_INFO; i++)
 		{
 			gpue.eventType = i;
+			switch (i)
+			{
+			case GFSProtocolHeader::GFSProtocolEventType::FIRE_INFO:
+			{
+				strEventType = _T("화재");
+				break;
+			}
+			case GFSProtocolHeader::GFSProtocolEventType::GAS_INFO:
+			{
+				strEventType = _T("가스");
+				break;
+			}
+			case GFSProtocolHeader::GFSProtocolEventType::SURVEILLANCE_INFO:
+			{
+				strEventType = _T("감시");
+				break;
+			}
+			case GFSProtocolHeader::GFSProtocolEventType::DISCONNECTION_INFO:
+			{
+				strEventType = _T("단선");
+				break;
+			}
+			case GFSProtocolHeader::GFSProtocolEventType::RESTORATION_INFO:
+			{
+				strEventType = _T("시스템 복구 신호");
+				break;
+			}
+			default:
+			{
+				strEventType = _T("알 수 없는 이벤트 타입");
+				break;
+			}
+			}
+
 			Server::Instance()->SendAll((BYTE*)&gpue, sizeof(GFSProtocolUnsolicitedEvent));
+			strMsg.Format(_T("이벤트 발생 ! - EVENT TYPE : [%s], 발생 정보 : [일괄 복구]"), strEventType);
+			Log::Trace("%s", CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
 			
 			Sleep(100);	//sleep을 주지 않으면 패킷이 뭉쳐서 가능 경우가 발생해 받는 쪽에서 쪼개서 파싱해야 해서 잠시 sleep을 줌, 이쪽에서 구현하는 거 아니니까 크게 상관없긴 함
 		}
