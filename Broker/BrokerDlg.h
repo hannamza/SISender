@@ -7,6 +7,7 @@
 #include "afxwin.h"
 #include "afxcmn.h"
 #include "DlgEventTest.h"
+#include "DlgPW.h"
 
 // CBrokerDlg 대화 상자
 class CBrokerDlg : public CDialogEx
@@ -46,6 +47,7 @@ public:
 	CComboBox m_comboPort;
 	CRichEditCtrl m_richLog;
 	ULONGLONG m_nAliveCount;
+	BOOL m_bAdminMode;
 
 	afx_msg void OnBnClickedButtonStart();
 	afx_msg void OnBnClickedButtonStop();

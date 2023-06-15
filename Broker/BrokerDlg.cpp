@@ -57,6 +57,7 @@ CBrokerDlg::CBrokerDlg(CWnd* pParent /*=NULL*/)
 	m_bKilled = false;
 	m_strLogFolderName = _T("Broker_Log");
 	m_nAliveCount = 0;
+	m_bAdminMode = FALSE;
 }
 
 void CBrokerDlg::DoDataExchange(CDataExchange* pDX)
@@ -567,6 +568,28 @@ void CBrokerDlg::OnBnClickedButtonTest()
 // 
 // 	CSM::WriteEventToSharedMemory(pData);
 // 	Log::Trace("Event Test - Shared Memory Wrote!");
+
+	if (!m_bAdminMode)
+	{
+		CDlgPW dlgPW;
+		if (dlgPW.DoModal() == IDOK)
+		{
+			if (dlgPW.m_strPW.Compare(_T("gfsadmin1234!")) == 0)
+			{
+				AfxMessageBox(_T("관리자 모드로 변경되었습니다.\r\n이후에는 암호 입력없이 이벤트 테스트 기능을 사용할 수 있습니다."));
+				m_bAdminMode = TRUE;
+			}
+			else
+			{
+				AfxMessageBox(_T("잘못된 암호입니다."));
+				return;
+			}
+		}
+		else
+		{
+			return;
+		}
+	}
 
 	CDlgEventTest dlg;
 	if (dlg.DoModal() == IDOK)

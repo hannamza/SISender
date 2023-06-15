@@ -202,6 +202,7 @@
     <ClInclude Include="Broker.h" />
     <ClInclude Include="BrokerDlg.h" />
     <ClInclude Include="DlgEventTest.h" />
+    <ClInclude Include="DlgPW.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SerialComm.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="Broker.cpp" />
     <ClCompile Include="BrokerDlg.cpp" />
     <ClCompile Include="DlgEventTest.cpp" />
+    <ClCompile Include="DlgPW.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="SerialComm.cpp" />
     <ClCompile Include="stdafx.cpp">
