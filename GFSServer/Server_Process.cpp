@@ -1502,14 +1502,14 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 		else
 		{
 			gpue.occurrence = GFSProtocolHeader::GFSProtocolOccurrence::RESTORATION_ALL;
-			strOccurence = _T("복구");
+			strOccurence = _T("일괄 복구");
 		}
 		break;
 	}
 	case 'F':
 	{
 		gpue.occurrence = GFSProtocolHeader::GFSProtocolOccurrence::RESTORATION;
-		strOccurence = _T("일괄 복구");
+		strOccurence = _T("복구");
 		break;
 	}
 	default:
@@ -1544,13 +1544,25 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 
 			gpue.reserved = 0;
 
+			CString strBuildingName = _T("");
+			CString strStair = _T("");
+			CString strFloor = _T("");
+			CString strRoom = _T("");
+			CString strCircuit = _T("");
+
+			strBuildingName.Format(_T("%s"), CCommonFunc::CharToWCHAR(iter->second.buildingName));
+			strStair.Format(_T("%s"), CCommonFunc::CharToWCHAR(iter->second.stair));
+			strFloor.Format(_T("%s"), CCommonFunc::CharToWCHAR(iter->second.floor));
+			strRoom.Format(_T("%s"), CCommonFunc::CharToWCHAR(iter->second.room));
+			strCircuit.Format(_T("%s"), CCommonFunc::CharToWCHAR(iter->second.circuitName));
+
 			Server::Instance()->SendAll((BYTE*)&gpue, sizeof(GFSProtocolUnsolicitedEvent));
 			strMsg.Format(_T("이벤트 발생 ! - 건물 : [%s], 계단 : [%s], 층 : [%s], 실 : [%s], 설비 : [%s], EVENT TYPE : [%s], 발생 정보 : [%s]"),
-				CCommonFunc::CharToWCHAR(iter->second.buildingName), 
-				CCommonFunc::CharToWCHAR(iter->second.stair),
-				CCommonFunc::CharToWCHAR(iter->second.floor),
-				CCommonFunc::CharToWCHAR(iter->second.room),
-				CCommonFunc::CharToWCHAR(iter->second.circuitName),
+				strBuildingName,
+				strStair,
+				strFloor,
+				strRoom,
+				strCircuit,
 				strEventType,
 				strOccurence
 				);
