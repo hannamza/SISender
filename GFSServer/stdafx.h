@@ -24,9 +24,6 @@
 
 #define GFS_SERVER_MODE
 
-#define TIMER_GFS_SERVER_KEEP_ALIVE_ID	100
-#define	TIMER_GFS_SERVER_KEEP_ALIVE_PERIOD	5000
-
 #include <map>
 
 #include "CommonDefines.h"

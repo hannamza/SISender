@@ -517,6 +517,26 @@ void CLogRemoverDlg::GetLogFolderList()
 		m_vecLogFolder.push_back(sTemp);
 	}
 
+	BOOL bUseGFSServer = TRUE;
+	strSection.Format(_T("SI_INFO_SERVER"));
+	if (!state.ReadState(strSection, L"PORT", nTemp))
+	{
+		bUseGFSServer = FALSE;
+	}
+
+	if (!state.ReadState(strSection, L"ID", nTemp))
+	{
+		bUseGFSServer = FALSE;
+	}
+
+	if (!state.ReadState(strSection, L"PW", nTemp))
+	{
+		bUseGFSServer = FALSE;
+	}
+
+	if(bUseGFSServer)
+		m_vecLogFolder.push_back(_T("GFSServer_Log"));
+
 	m_vecLogFolder.push_back(_T("PM_Log"));
 }
 

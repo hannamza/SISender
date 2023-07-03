@@ -29,6 +29,7 @@ private:
 
 public:
 	BOOL m_bSMCheck;
+	ULONGLONG m_nAliveCount;
 
 // 구현입니다.
 protected:

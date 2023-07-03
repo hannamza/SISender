@@ -14,6 +14,7 @@ enum {
 	SI_SENDER1,
 	SI_SENDER2,
 	SI_SENDER3,
+	GFS_SERVER,
 	LOG_REMOVER,
 	PROCESS_TOTAL_COUNT
 };
@@ -108,6 +109,7 @@ static const TCHAR* g_lpszProcessName[] = {
 	_T("SISender.exe"),
 	_T("SISender.exe"),
 	_T("SISender.exe"),
+	_T("GFSServer.exe"),
 	_T("LogRemover.exe"),
 	NULL
 };
@@ -132,6 +134,12 @@ static const TCHAR* g_lpszSIName[] = {
 
 // PM 종료 플래그 확인 타이머 주기 (ms)
 #define TIMER_PM_QUIT_CHECK_PERIOD	1000
+
+// GFS SERVER와 통신하는 Client Keep Alive 타이머 ID
+#define TIMER_GFS_SERVER_KEEP_ALIVE_ID	500
+
+// GFS SERVER와 통신하는 Client Keep Alive 타이머 주기 (ms)
+#define	TIMER_GFS_SERVER_KEEP_ALIVE_PERIOD	5000
 
 // 프로그램 창을 트레이로 보낼 때 사용되는 사용자 메세지 
 #define	WM_TRAY_NOTIFICATION	(WM_USER+1003)

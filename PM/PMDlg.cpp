@@ -267,6 +267,8 @@ void CPMDlg::ShowProgramVersion()
 
 	}
 
+	strProtocol = _T("GFS, ") + strProtocol;
+
 	strVersionInfo.Format(_T("Program Ver : [%s] Protocols : [%s]"), strProgramVersion, strProtocol);
 	CStatic* pStatic = (CStatic*)GetDlgItem(IDC_STATIC_PROGRAM_VERSION);
 	pStatic->SetWindowTextW(strVersionInfo);
@@ -355,6 +357,29 @@ BOOL CPMDlg::InitProcessInfo()
 					pPInfo->use = false;
 					break;
 				}
+			}
+
+			break;
+		}
+		case GFS_SERVER:
+		{
+			strSection.Format(_T("SI_INFO_SERVER"));
+			if (!state.ReadState(strSection, L"PORT", nTemp))
+			{
+				pPInfo->use = false;
+				break;
+			}
+
+			if (!state.ReadState(strSection, L"ID", nTemp))
+			{
+				pPInfo->use = false;
+				break;
+			}
+
+			if (!state.ReadState(strSection, L"PW", nTemp))
+			{
+				pPInfo->use = false;
+				break;
 			}
 
 			break;

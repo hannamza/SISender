@@ -76,6 +76,8 @@ CGFSServerDlg::CGFSServerDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_GFSSERVER_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+	m_nAliveCount = 0;
 }
 
 void CGFSServerDlg::DoDataExchange(CDataExchange* pDX)
@@ -211,6 +213,12 @@ BOOL CGFSServerDlg::OnInitDialog()
 
 	SetTimer(2, 500, NULL);
 
+	SetTimer(TIMER_ALIVE_COUNT_ID, TIMER_ALIVE_COUNT_PERIOD, NULL);
+
+#ifndef TEST_MODE_FLAG
+	SetTimer(TIMER_PM_QUIT_CHECK_ID, TIMER_PM_QUIT_CHECK_PERIOD, NULL);		//20230118 GBM -test
+#endif
+
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -304,6 +312,29 @@ void CGFSServerDlg::OnTimer(UINT_PTR nIDEvent)
 	else if (nIDEvent == TIMER_GFS_SERVER_KEEP_ALIVE_ID)
 	{
 		Server::Instance()->CheckKeepAliveGFSClients();
+	}
+
+	else if (nIDEvent == TIMER_ALIVE_COUNT_ID)
+	{
+		if (m_nAliveCount != ULLONG_MAX)
+			m_nAliveCount++;
+		else
+			m_nAliveCount = 0;
+
+		CSM::WriteAliveCountToSharedMemory(GFS_SERVER, m_nAliveCount);
+	}
+	else if (nIDEvent == TIMER_PM_QUIT_CHECK_ID)
+	{
+		bool bProcessRun = false;
+		bProcessRun = CSM::ReadProcessRunFromSharedMemory(GFS_SERVER);
+
+		if (!bProcessRun)
+		{
+			KillTimer(TIMER_PM_QUIT_CHECK_ID);
+			Log::Trace("PM에 의한 종료!");
+			PostMessageW(WM_QUIT);
+		}
+
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
