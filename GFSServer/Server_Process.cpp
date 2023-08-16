@@ -1450,6 +1450,7 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 
 	GFSProtocolUnsolicitedEvent gpue;
 
+	//20230817 GBM - 수신기 복구 시 감시 이벤트 수천건 발생으로 인해 불필요한 알람 방지를 위해 화재 및 수신기 복구 이벤트만 전송
 	switch (pData[SI_EVENT_BUF_COMMAND])
 	{
 	case 'F':
@@ -1462,19 +1463,25 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 	{
 		gpue.eventType = GFSProtocolHeader::GFSProtocolEventType::GAS_INFO;
 		strEventType = _T("가스");
-		break;
+		//break;
+		Log::Trace("가스 이벤트가 들어왔습니다. 가스 이벤트는 전송하지 않습니다.");
+		return;
 	}
 	case 'S':
 	{
 		gpue.eventType = GFSProtocolHeader::GFSProtocolEventType::SURVEILLANCE_INFO;
 		strEventType = _T("감시");
-		break;
+		//break;
+		Log::Trace("감시 이벤트가 들어왔습니다. 감시 이벤트는 전송하지 않습니다.");
+		return;
 	}
 	case 'T':
 	{
 		gpue.eventType = GFSProtocolHeader::GFSProtocolEventType::DISCONNECTION_INFO;
 		strEventType = _T("단선");
-		break;
+		//break;
+		Log::Trace("단선 이벤트가 들어왔습니다. 단선 이벤트는 전송하지 않습니다.");
+		return;
 	}
 	case 'R':
 	{
@@ -1574,7 +1581,7 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 			return;
 		}
 	}
-	else  //수신기가 복구되면 각 이벤트 타입 별로 일괄해제를 보낸다. -> 김호 마스터
+	else  //수신기가 복구되면 각 이벤트 타입 별로 일괄해제를 보낸다. -> 김호 마스터 -> 20230817 GBM - 수신기 복구 시 감시 이벤트 수천건 발생으로 인해 불필요한 알람 방지를 위해 수신기 복구 이벤트만 전송
 	{
 		//회로 위치 정보가 없으므로 헤더와 eventType, occurrence, reserved를 제외한 나머지 정보를 0으로 초기화 
 		memset(gpue.building, 0, sizeof(GFSProtocolUnsolicitedEvent) - (sizeof(GFSProtocolHeader) + sizeof(int) /* eventType */ + sizeof(int) /* occurrence */  + sizeof(double) /* reserved */));
@@ -1587,22 +1594,26 @@ void Server::ProcessGFSProtocolUnSolicitedEvent(BYTE* pData)
 			case GFSProtocolHeader::GFSProtocolEventType::FIRE_INFO:
 			{
 				strEventType = _T("화재");
-				break;
+				//break;
+				continue;
 			}
 			case GFSProtocolHeader::GFSProtocolEventType::GAS_INFO:
 			{
 				strEventType = _T("가스");
-				break;
+				//break;
+				continue;
 			}
 			case GFSProtocolHeader::GFSProtocolEventType::SURVEILLANCE_INFO:
 			{
 				strEventType = _T("감시");
-				break;
+				//break;
+				continue;
 			}
 			case GFSProtocolHeader::GFSProtocolEventType::DISCONNECTION_INFO:
 			{
 				strEventType = _T("단선");
-				break;
+				//break;
+				continue;
 			}
 			case GFSProtocolHeader::GFSProtocolEventType::RESTORATION_INFO:
 			{
