@@ -30,11 +30,11 @@
 #define		TIME_SLEEP(t, b) { DWORD cT=GetTickCount(); while(b && GetTickCount() - cT < t) Sleep(1); }
 
 #include "CommonDefines.h"
+#include "Log.h"
 //#include "DeviceInfo.h"
 #include "TSingleton.h"
 #include "SerialComm.h"
 #include "CriticalSectionEx.h"
-#include "Log.h"
 #include "CommonFunc.h"
 //#include "ClientInterface.h"
 //#include "CommonProtocol.h"

@@ -35,11 +35,11 @@
 
 #include <map>
 
+#include "Log.h"
 #include "CommonDefines.h"
 #include "DeviceInfo.h"
 #include "TSingleton.h"
 #include "CriticalSectionEx.h"
-#include "Log.h"
 #include "CommonFunc.h"
 #include "Network.h"
 #include "ClientInterface.h"

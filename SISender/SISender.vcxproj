@@ -194,6 +194,7 @@
     <ClInclude Include="..\Include\CommonFunc.h" />
     <ClInclude Include="..\Include\CriticalSectionEx.h" />
     <ClInclude Include="..\Include\EncDec.h" />
+    <ClInclude Include="..\Include\Log.h" />
     <ClInclude Include="..\Include\MiniDump.h" />
     <ClInclude Include="..\Include\MinidumpHelp.h" />
     <ClInclude Include="..\Include\MTVERIFY.h" />
@@ -210,7 +211,6 @@
     <ClInclude Include="CommonState.h" />
     <ClInclude Include="DeviceInfo.h" />
     <ClInclude Include="EventSend.h" />
-    <ClInclude Include="Log.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SISender.h" />
@@ -223,6 +223,7 @@
     <ClCompile Include="..\Include\CircuitLocInfo.cpp" />
     <ClCompile Include="..\Include\CommonFunc.cpp" />
     <ClCompile Include="..\Include\EncDec.cpp" />
+    <ClCompile Include="..\Include\Log.cpp" />
     <ClCompile Include="..\Include\MiniDump.cpp" />
     <ClCompile Include="..\Include\MinidumpHelp.cpp" />
     <ClCompile Include="..\Include\ReadWriteState.cpp" />
@@ -235,7 +236,6 @@
     <ClCompile Include="CommonState.cpp" />
     <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="EventSend.cpp" />
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="SISender.cpp" />
     <ClCompile Include="SISenderDlg.cpp" />

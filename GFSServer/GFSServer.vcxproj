@@ -193,6 +193,7 @@
     <ClInclude Include="..\Include\CommonFunc.h" />
     <ClInclude Include="..\Include\CriticalSectionEx.h" />
     <ClInclude Include="..\Include\EncDec.h" />
+    <ClInclude Include="..\Include\Log.h" />
     <ClInclude Include="..\Include\MiniDump.h" />
     <ClInclude Include="..\Include\MinidumpHelp.h" />
     <ClInclude Include="..\Include\MTVERIFY.h" />
@@ -208,7 +209,6 @@
     <ClInclude Include="GFSServer.h" />
     <ClInclude Include="GFSServerDlg.h" />
     <ClInclude Include="IOEvent.h" />
-    <ClInclude Include="Log.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="Resource.h" />
@@ -219,6 +219,7 @@
   <ItemGroup>
     <ClCompile Include="..\Include\CommonFunc.cpp" />
     <ClCompile Include="..\Include\EncDec.cpp" />
+    <ClCompile Include="..\Include\Log.cpp" />
     <ClCompile Include="..\Include\MiniDump.cpp" />
     <ClCompile Include="..\Include\MinidumpHelp.cpp" />
     <ClCompile Include="..\Include\ReadWriteState.cpp" />
@@ -230,7 +231,6 @@
     <ClCompile Include="GFSServer.cpp" />
     <ClCompile Include="GFSServerDlg.cpp" />
     <ClCompile Include="IOEvent.cpp" />
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Packet.cpp" />
     <ClCompile Include="Server.cpp" />

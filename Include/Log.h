@@ -9,7 +9,7 @@ namespace Log
 	void Error(const char* fileName, const char* funcName, int line, const char* msg, ...);
 	void Error(const char* fileName, const char* funcName, int line, int code, const char* msg, ...);
 
-	void Setup();
+	void Setup(CString strLogFolderName);
 	void Cleanup();
 
 	void EnableTrace(bool enable);

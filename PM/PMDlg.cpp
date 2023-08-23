@@ -112,7 +112,7 @@ BOOL CPMDlg::OnInitDialog()
 	//프로그램 버전 표시
 	ShowProgramVersion();
 
-	Log::Setup();
+	Log::Setup(_T("PM_Log"));
 	Log::SetMainPointer(this);
 
 	Log::Trace("PM Start!");

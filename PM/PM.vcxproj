@@ -196,13 +196,13 @@
     <ClInclude Include="..\Include\CommonFunc.h" />
     <ClInclude Include="..\Include\CriticalSectionEx.h" />
     <ClInclude Include="..\Include\EncDec.h" />
+    <ClInclude Include="..\Include\Log.h" />
     <ClInclude Include="..\Include\MiniDump.h" />
     <ClInclude Include="..\Include\MinidumpHelp.h" />
     <ClInclude Include="..\Include\MTVERIFY.h" />
     <ClInclude Include="..\Include\ReadWriteState.h" />
     <ClInclude Include="..\Include\SM.h" />
     <ClInclude Include="..\Include\TSingleton.h" />
-    <ClInclude Include="Log.h" />
     <ClInclude Include="PM.h" />
     <ClInclude Include="PMDlg.h" />
     <ClInclude Include="ProcWrapper.h" />
@@ -214,11 +214,11 @@
     <ClCompile Include="..\Include\CircuitLocInfo.cpp" />
     <ClCompile Include="..\Include\CommonFunc.cpp" />
     <ClCompile Include="..\Include\EncDec.cpp" />
+    <ClCompile Include="..\Include\Log.cpp" />
     <ClCompile Include="..\Include\MiniDump.cpp" />
     <ClCompile Include="..\Include\MinidumpHelp.cpp" />
     <ClCompile Include="..\Include\ReadWriteState.cpp" />
     <ClCompile Include="..\Include\SM.cpp" />
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="PM.cpp" />
     <ClCompile Include="PMDlg.cpp" />
     <ClCompile Include="ProcWrapper.cpp" />

@@ -193,6 +193,7 @@
     <ClInclude Include="..\Include\CommonFunc.h" />
     <ClInclude Include="..\Include\CriticalSectionEx.h" />
     <ClInclude Include="..\Include\EncDec.h" />
+    <ClInclude Include="..\Include\Log.h" />
     <ClInclude Include="..\Include\MiniDump.h" />
     <ClInclude Include="..\Include\MinidumpHelp.h" />
     <ClInclude Include="..\Include\MTVERIFY.h" />
@@ -203,7 +204,6 @@
     <ClInclude Include="BrokerDlg.h" />
     <ClInclude Include="DlgEventTest.h" />
     <ClInclude Include="DlgPW.h" />
-    <ClInclude Include="Log.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SerialComm.h" />
     <ClInclude Include="stdafx.h" />
@@ -212,6 +212,7 @@
   <ItemGroup>
     <ClCompile Include="..\Include\CommonFunc.cpp" />
     <ClCompile Include="..\Include\EncDec.cpp" />
+    <ClCompile Include="..\Include\Log.cpp" />
     <ClCompile Include="..\Include\MiniDump.cpp" />
     <ClCompile Include="..\Include\MinidumpHelp.cpp" />
     <ClCompile Include="..\Include\ReadWriteState.cpp" />
@@ -220,7 +221,6 @@
     <ClCompile Include="BrokerDlg.cpp" />
     <ClCompile Include="DlgEventTest.cpp" />
     <ClCompile Include="DlgPW.cpp" />
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="SerialComm.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -171,7 +171,9 @@ BOOL CSISenderDlg::OnInitDialog()
 	CCommonState::Instance()->m_nProcessIndex = 1;
 #endif
 
-	Log::Setup();
+	CString strLogFolderName = _T("");
+	strLogFolderName.Format(_T("SISender%d_Log"), CCommonState::Instance()->m_nProcessIndex);
+	Log::Setup(strLogFolderName);
 	Log::SetMainPointer(this);
 
 	Log::Trace("SISender started...");

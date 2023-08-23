@@ -87,9 +87,6 @@
     <ClInclude Include="Server.h">
       <Filter>Socket</Filter>
     </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CommonData.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -104,6 +101,9 @@
     </ClInclude>
     <ClInclude Include="..\Protocol\GFSProtocol.h">
       <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Log.h">
+      <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -152,9 +152,6 @@
     <ClCompile Include="Server_Process.cpp">
       <Filter>Socket</Filter>
     </ClCompile>
-    <ClCompile Include="Log.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="CommonData.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -163,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="EventSend.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\Log.cpp">
+      <Filter>Include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

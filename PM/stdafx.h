@@ -41,6 +41,7 @@
 #include "SM.h"
 #include "ProcWrapper.h"
 #include "CircuitLocInfo.h"
+#include "Log.h"
 
 #define STX       0x02
 #define ETX       0x03

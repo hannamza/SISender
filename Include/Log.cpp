@@ -28,6 +28,8 @@ namespace Log
 	char szDebugLog[10][2048];
 	int nDebugIndex = 0;
 
+	CString sLogFolderName = _T("");
+
 	void SetMainPointer(CWnd* pWnd)
 	{
 		pMainWnd = pWnd;
@@ -40,7 +42,8 @@ namespace Log
 		{
 			CString sLogFileName;
 			CTime time = CTime::GetCurrentTime();
-			sLogFileName.Format(_T("GFSServer_Log\\%d\\%d\\%d\\"), time.GetYear(), time.GetMonth(), time.GetDay());
+			sLogFileName.Format(_T("%s\\%d\\%d\\%d\\"), sLogFolderName, time.GetYear(), time.GetMonth(), time.GetDay());
+			//sLogFileName.Format(_T("PM_Log\\%d\\%d\\%d\\"), time.GetYear(), time.GetMonth(), time.GetDay());
 			CString sLogPath = CCommonFunc::GetMakePath(sLogFileName);
 			CCommonFunc::CreateDirectoryW(sLogPath);
 			sLogFileName.Format(_T("%d.log"), time.GetHour());
@@ -73,6 +76,7 @@ namespace Log
 		{
 			fseek(file, SEEK_END, 0L);
 			fwrite(pValue, sizeof(char), strlen(pValue), file);
+			fflush(file);		//20230823 GBM - 시스템 출력 버퍼에 바로 적용해서 프로그램 운용 시 비정상종료 시에도 그 이전에 로그는 남기도록 수정
 		}
 		LeaveCriticalSection(&logFile);
 	}
@@ -241,12 +245,14 @@ namespace Log
 		}
 	}
 
-	void Setup()
+	void Setup(CString strLogFolderName)
 	{
 		InitializeCriticalSection(&logCS);
 		InitializeCriticalSection(&logFile);
 
 		libModule = LoadLibraryA("NTDLL.DLL");
+
+		sLogFolderName = strLogFolderName;
 
 		log_file_open();
 	}

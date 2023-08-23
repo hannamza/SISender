@@ -109,7 +109,7 @@ BOOL CGFSClientDlg::OnInitDialog()
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	CCommonState::New();
 
-	Log::Setup();
+	Log::Setup(_T("GFSClient_Log"));
 	Log::SetMainPointer(this);
 
 	Log::Trace("GFSClient started...");

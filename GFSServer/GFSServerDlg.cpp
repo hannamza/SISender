@@ -147,7 +147,7 @@ BOOL CGFSServerDlg::OnInitDialog()
 
 	::SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
 
-	Log::Setup();
+	Log::Setup(_T("GFSServer_Log"));
 	Log::SetMainPointer(this);
 
 	Log::Trace("GFSServer started...");
