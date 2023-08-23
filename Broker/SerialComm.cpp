@@ -402,7 +402,7 @@ DWORD CSerialComm::ReadComm(BYTE *pBuff, DWORD nToRead)
 				{
 					strBuf += pData[i];
 				}
-				Log::Trace("Serial Event Occured! Shared Memory is Written!", CCommonFunc::WCharToChar(strBuf.GetBuffer(0)));
+				Log::Trace("Serial Event Occured! Shared Memory is Written! : [%s]", CCommonFunc::WCharToChar(strBuf.GetBuffer(0)));
 				//Log::Trace("Serial Event Occured! Shared Memory is Written!");
 				//20230111 GBM end
 

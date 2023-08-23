@@ -376,8 +376,8 @@ void CEventSend::ProcessEventQueue(queue<BYTE*> & queue, DWORD & dwValue, bool b
 		}
 		case COMMAX:
 		{
-			//CClientInterface::Instance()->COMMAXProcessRequestFireAlarm(pData);
-			m_pWnd->PostMessage(WM_COMMAX_EVENT_PROCESS, (WPARAM)pData, NULL);
+			//m_pWnd->PostMessage(WM_COMMAX_EVENT_PROCESS, (WPARAM)pData, NULL);
+			CCommaxFunc::Instance()->CommaxEventProcess(pData);	//20230823 GBM - UI 스레드로 넘길 필요없어서 직접 호출
 			break;
 		}
 		default:

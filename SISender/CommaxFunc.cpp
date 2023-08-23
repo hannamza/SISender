@@ -361,50 +361,52 @@ void CCommaxFunc::CommaxEventProcess(BYTE* pData)
 
 	Log::Trace("%s", CCommonFunc::WCharToChar(strMsg.GetBuffer(0)));
 
-	LARGE_INTEGER startTime, curTime;
-	QueryPerformanceCounter(&startTime);
-
-	while (true)
-	{
-		BYTE buffer[265] = { 0, };
-		int nLength = 0;
-		nLength = recv(commaxSock, (char*)buffer, 265, 0);
-
-		if (nLength > 0)
-		{
-			//Log::Trace("Commax Response Packet : %s", (char*)buffer);
-			int nResult = 0;
-			nResult = CheckCommaxResponse(buffer, nLength);
-			switch (nResult)
-			{
-			case -1:
-			{
-				Log::Trace("Wrong Packet Received!");
-				break;
-			}
-			case OK:
-			{
-				Log::Trace("Commax Response Result : OK!");
-				break;
-			}
-			default:
-			{
-				Log::Trace("Commax Response Result : ERROR (%d)!", nResult);
-				break;
-			}
-			}
-
-			break;
-		}
-
-		QueryPerformanceCounter(&curTime);
-		double deltaTime = CCommonFunc::GetPreciseDeltaTime(startTime, curTime);
-		if (deltaTime > 2000)	//2초 이내 Response 없으면 기다리지 않고 소켓 종료
-		{
-			Log::Trace("Commax Response Timeout!");
-			break;
-		}
-	}
+	//20230823 - GBM start - 응답 받지 않음, COMMAX 서버가 어차피 동시 혹은 짧은 순간 많은 연결을 처리하지 못하므로 의미가 없고 이러한 행정은 우리 프로그램이 2초간 응답없음 상태를 유발함
+// 	LARGE_INTEGER startTime, curTime;
+// 	QueryPerformanceCounter(&startTime);
+// 
+// 	while (true)
+// 	{
+// 		BYTE buffer[265] = { 0, };
+// 		int nLength = 0;
+// 		nLength = recv(commaxSock, (char*)buffer, 265, 0);
+// 
+// 		if (nLength > 0)
+// 		{
+// 			//Log::Trace("Commax Response Packet : %s", (char*)buffer);
+// 			int nResult = 0;
+// 			nResult = CheckCommaxResponse(buffer, nLength);
+// 			switch (nResult)
+// 			{
+// 			case -1:
+// 			{
+// 				Log::Trace("Wrong Packet Received!");
+// 				break;
+// 			}
+// 			case OK:
+// 			{
+// 				Log::Trace("Commax Response Result : OK!");
+// 				break;
+// 			}
+// 			default:
+// 			{
+// 				Log::Trace("Commax Response Result : ERROR (%d)!", nResult);
+// 				break;
+// 			}
+// 			}
+// 
+// 			break;
+// 		}
+// 
+// 		QueryPerformanceCounter(&curTime);
+// 		double deltaTime = CCommonFunc::GetPreciseDeltaTime(startTime, curTime);
+// 		if (deltaTime > 2000)	//2초 이내 Response 없으면 기다리지 않고 소켓 종료
+// 		{
+// 			Log::Trace("Commax Response Timeout!");
+// 			break;
+// 		}
+// 	}
+	//20230823 GBM end
 
 	if (closesocket(commaxSock) == SOCKET_ERROR)
 	{
