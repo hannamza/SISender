@@ -30,6 +30,7 @@ private:
 public:
 	BOOL m_bSMCheck;
 	ULONGLONG m_nAliveCount;
+	long m_nSMIndex;
 
 // 구현입니다.
 protected:
@@ -51,6 +52,7 @@ public:
 	afx_msg void OnBnClickedButtonStop();
 	BOOL GetServerInfoFromIniFile();
 	BOOL CheckSMTimeChanged(SYSTEMTIME preTime, SYSTEMTIME curTime);
+	BOOL CheckSMIndexChanged();	//현재 공유메모리 상의 마지막 이벤트 인덱스를 체크한다.
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnTrayNotification(WPARAM, LPARAM);
 	afx_msg void OnMenuStart();

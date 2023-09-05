@@ -102,6 +102,9 @@ static const TCHAR g_lpszOccurInfo[] = {
 //회로 최대 개수
 #define CIRCUIT_MAX_COUNT	253
 
+//최대 이벤트 개수
+#define EVENT_MAX_COUNT UNIT_MAX_COUNT * SYSTEM_MAX_COUNT * CIRCUIT_MAX_COUNT
+
 
 //프로세스 명
 static const TCHAR* g_lpszProcessName[] = {

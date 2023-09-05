@@ -16,19 +16,46 @@ UINT ThreadSMCheck(LPVOID pParam)
 {
 	CGFSServerDlg* pDlg = (CGFSServerDlg*)pParam;
 
-	SYSTEMTIME st = CSM::ReadEventTimeFromSharedMemory();
+	int nBufPos = 0;
+	BYTE* pData;
+	BYTE ringBuffer[EVENT_MAX_COUNT][SI_EVENT_BUF_SIZE];
+	BOOL bOverflow = FALSE;
+
+	pDlg->m_nSMIndex = CSM::ReadEventIndex();
 
 	while (pDlg->m_bSMCheck)
 	{
-		if (pDlg->CheckSMTimeChanged(st, CSM::ReadEventTimeFromSharedMemory()))
+		if (pDlg->CheckSMIndexChanged())
 		{
-			BYTE buf[SI_EVENT_BUF_SIZE];
-			CSM::ReadEventBufFromSharedMemory(buf, sizeof(buf));
-			CEventSend::Instance()->SendEvent(buf);
-			Log::Trace("공유메모리에 이벤트 발생함!");
-			st = CSM::ReadEventTimeFromSharedMemory();
+			int nEventCount = 0;
+			nEventCount = CSM::shm->es.SMIndex - pDlg->m_nSMIndex;
+			if (nEventCount < 0)
+			{
+				nEventCount = EVENT_MAX_COUNT - pDlg->m_nSMIndex;
+				bOverflow = TRUE;
+			}
 
-			//Log::Trace("이벤트 처리함!");
+			for (int i = 0; i < nEventCount; i++)
+			{
+				pDlg->m_nSMIndex++;
+
+				if (nBufPos == EVENT_MAX_COUNT)
+				{
+					nBufPos = 0;
+				}
+
+				pData = ringBuffer[nBufPos];
+				CSM::ReadEventBufFromSharedMemory(pDlg->m_nSMIndex, pData, SI_EVENT_BUF_SIZE);
+				nBufPos++;
+				CEventSend::Instance()->SendEvent(pData);
+				Log::Trace("이벤트 들어옴! 공유메모리 Index : %d, 프로그램 버퍼 Index : %d", CSM::shm->es.SMIndex, pDlg->m_nSMIndex);
+			}
+
+			if (bOverflow)
+			{
+				pDlg->m_nSMIndex = -1;
+				bOverflow = FALSE;
+			}
 		}
 	}
 
@@ -78,6 +105,7 @@ CGFSServerDlg::CGFSServerDlg(CWnd* pParent /*=NULL*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	m_nAliveCount = 0;
+	m_nSMIndex = -1;
 }
 
 void CGFSServerDlg::DoDataExchange(CDataExchange* pDX)
@@ -528,6 +556,15 @@ BOOL CGFSServerDlg::CheckSMTimeChanged(SYSTEMTIME preTime, SYSTEMTIME curTime)
 		return TRUE;
 
 	return FALSE;
+}
+
+BOOL CGFSServerDlg::CheckSMIndexChanged()
+{
+	BOOL bRet = FALSE;
+	if (m_nSMIndex != CSM::shm->es.SMIndex)
+		bRet = TRUE;
+
+	return bRet;
 }
 
 void CGFSServerDlg::OnDestroy()

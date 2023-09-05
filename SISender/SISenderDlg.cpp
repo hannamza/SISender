@@ -16,37 +16,49 @@ UINT ThreadSMCheck(LPVOID pParam)
 {
 	CSISenderDlg* pDlg = (CSISenderDlg*)pParam;
 
-	BYTE ringBuffer[(SI_EVENT_BUF_SIZE + 1) * 20000];
 	int nBufPos = 0;
 	BYTE* pData;
+	BYTE ringBuffer[EVENT_MAX_COUNT][SI_EVENT_BUF_SIZE];
+	BOOL bOverflow = FALSE;
 
-	SYSTEMTIME st = CSM::ReadEventTimeFromSharedMemory();
+	pDlg->m_nSMIndex = CSM::ReadEventIndex();
 
 	while (pDlg->m_bSMCheck)
 	{
-		if (pDlg->CheckSMTimeChanged(st, CSM::ReadEventTimeFromSharedMemory()))
+		if (pDlg->CheckSMIndexChanged())
 		{
-			// 회로 최대 수용 개수가 1만개가 조금 넘으므로 최대 이만큼을 잡고 1000개 정도의 마진을 두어 인덱스가 여기까지 도달하면 초기화
-			if ((nBufPos + (SI_EVENT_BUF_SIZE + 1) * 1000) >= ((SI_EVENT_BUF_SIZE + 1) * 20000))
+			int nEventCount = 0;
+			nEventCount = CSM::shm->es.SMIndex - pDlg->m_nSMIndex;
+			if (nEventCount < 0)
 			{
-				nBufPos = 0;
+				nEventCount = EVENT_MAX_COUNT - pDlg->m_nSMIndex;
+				bOverflow = TRUE;
 			}
 
-			pData = &ringBuffer[nBufPos];
-			CSM::ReadEventBufFromSharedMemory(pData, SI_EVENT_BUF_SIZE);
-			nBufPos += SI_EVENT_BUF_SIZE + 1;
-			CEventSend::Instance()->SendEvent(pData);
+			for (int i = 0; i < nEventCount; i++)
+			{
+				pDlg->m_nSMIndex++;	
 
-// 			BYTE buf[SI_EVENT_BUF_SIZE];
-// 			CSM::ReadEventBufFromSharedMemory(buf, sizeof(buf));
-// 			CEventSend::Instance()->SendEvent(buf);
-			st = CSM::ReadEventTimeFromSharedMemory();
+				if (nBufPos == EVENT_MAX_COUNT)
+				{
+					nBufPos = 0;
+				}
 
-			//Log::Trace("이벤트 처리함!");
+				pData = ringBuffer[nBufPos];
+				CSM::ReadEventBufFromSharedMemory(pDlg->m_nSMIndex, pData, SI_EVENT_BUF_SIZE);
+				nBufPos++;
+				CEventSend::Instance()->SendEvent(pData);
+				Log::Trace("이벤트 들어옴! 공유메모리 Index : %d, 프로그램 버퍼 Index : %d", CSM::shm->es.SMIndex, pDlg->m_nSMIndex);
+			}
+
+			if (bOverflow)
+			{
+				pDlg->m_nSMIndex = -1;
+				bOverflow = FALSE;
+				Log::Trace("프로그램 이벤트 버퍼 오버플로우 발생! 이벤트 버퍼 인덱스 -1로 초기화!");
+			}
 		}
 	}
-
-	//SAFE_DELETE(pRingBuffer);
 
 	return 0;
 }
@@ -99,6 +111,7 @@ CSISenderDlg::CSISenderDlg(CWnd* pParent /*=NULL*/)
 	m_bAutoLogin = false;
 
 	m_nAliveCount = 0;
+	m_nSMIndex = -1;
 }
 
 void CSISenderDlg::DoDataExchange(CDataExchange* pDX)
@@ -1025,6 +1038,15 @@ BOOL CSISenderDlg::CheckSMTimeChanged(SYSTEMTIME preTime, SYSTEMTIME curTime)
 		return TRUE;
 
 	return FALSE;
+}
+
+BOOL CSISenderDlg::CheckSMIndexChanged()
+{
+	BOOL bRet = FALSE;
+	if (m_nSMIndex != CSM::shm->es.SMIndex)
+		bRet = TRUE;
+
+	return bRet;
 }
 
 //
