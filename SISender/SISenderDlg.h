@@ -2,6 +2,8 @@
 // SISenderDlg.h : 헤더 파일
 //
 
+//20250207 GBM - Git Test
+
 #pragma once
 #include "EventSend.h"
 #include "afxcmn.h"
